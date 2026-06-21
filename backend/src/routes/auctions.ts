@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { extrairDadosLeiloesMS, AuctionLot } from "@/services/leiloesScraper";
 import { extrairDadosSodre } from "@/services/sodreScraper";
-import { ensureAuctionLotsTable, insertAuctionLots, fetchAuctionLots } from "@/db/auctions";
+import { ensureAuctionLotsTable, insertAuctionLots, fetchAuctionLots, fetchAuctionLotById } from "@/db/auctions";
 
 const router = Router();
 
@@ -65,6 +65,22 @@ router.get("/", async (req: Request, res: Response) => {
     res.json({ success: true, count: lotes.length, lotes });
   } catch (error: any) {
     console.error("❌ Erro ao buscar lotes:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET /api/auctions/:id (obter lote por id)
+router.get("/:id", async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    await ensureAuctionLotsTable();
+    const lot = await fetchAuctionLotById(parseInt(id, 10));
+    if (!lot) {
+      return res.status(404).json({ error: "Lote não encontrado" });
+    }
+    res.json({ success: true, lot });
+  } catch (error: any) {
+    console.error(`❌ Erro ao buscar lote ${id}:`, error.message);
     res.status(500).json({ error: error.message });
   }
 });

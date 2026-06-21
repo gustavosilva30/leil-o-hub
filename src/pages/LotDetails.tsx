@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
-import { LOTS, AUCTION_HISTORY, LOT_TAGS, TAGS, PRIVATE_NOTES, CURRENT_USER } from '@/src/data/mock';
+import { useQuery } from '@tanstack/react-query';
+import { AUCTION_HISTORY, LOT_TAGS, TAGS, PRIVATE_NOTES, CURRENT_USER } from '@/src/data/mock';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -8,9 +9,59 @@ import { ArrowLeft, MapPin, Calendar, Heart, Share2, AlertTriangle, Info, Extern
 import { Separator } from '@/components/ui/separator';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3001/api/auctions";
+
 export function LotDetails() {
   const { id } = useParams();
-  const lot = LOTS.find(l => l.id === id) || LOTS[0];
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["auction", id],
+    queryFn: async () => {
+      const res = await fetch(`${API_BASE}/${id}`);
+      if (!res.ok) throw new Error("Falha ao buscar lote");
+      const json = await res.json();
+      return json.lot;
+    },
+    enabled: !!id,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-muted-foreground animate-pulse">Carregando informações do lote...</p>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="text-center p-8">
+        <p className="text-red-500 font-semibold">Lote não encontrado.</p>
+        <Link to="/lots" className="mt-4 inline-block">
+          <Button>Voltar para a busca</Button>
+        </Link>
+      </div>
+    );
+  }
+
+  const lot = {
+    id: data.id,
+    numeroLote: data.numero_lote,
+    marca: data.marca || data.veiculo_origem?.split(' ')[0] || 'Desconhecida',
+    modelo: data.modelo || data.veiculo_origem || 'Lote',
+    ano: data.ano || 'N/A',
+    estado: data.source || 'N/A',
+    cidade: data.fonte || 'N/A',
+    tipo: data.tipo_sucata === 'inservivel' ? 'Inservível' : 'Aproveitável',
+    leiloeiro: data.fonte || data.source,
+    imagens: data.image_url ? [data.image_url] : ['https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=800&h=600'],
+    valorEstimado: 0,
+    lanceAtual: 0,
+    dataLeilao: data.auction_start_at || data.auction_end_at || new Date().toISOString(),
+    descricao: data.raw?.descricao || `Veículo do lote ${data.numero_lote} da fonte ${data.fonte || data.source}.`,
+    motor: data.raw?.motor || false,
+    cambio: data.raw?.cambio || false,
+  };
 
   const history = AUCTION_HISTORY.filter(h => h.marca === lot.marca && h.modelo === lot.modelo);
   const minHist = history.length ? Math.min(...history.map(h => h.valorArrematado)) : 0;

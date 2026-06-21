@@ -163,11 +163,13 @@ export function Lots() {
             {displayedLots.map(lot => (
               <Card key={lot.id} className="overflow-hidden group flex flex-col bg-slate-50 border-slate-100 dark:bg-slate-900 dark:border-slate-800 hover:shadow-md transition-shadow">
                 <div className="relative aspect-video overflow-hidden bg-slate-200 dark:bg-slate-800">
-                  <img 
-                    src={lot.imagens[0]} 
-                    alt={`${lot.marca} ${lot.modelo}`}
-                    className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-                  />
+                  <Link to={`/lots/${lot.id}`}>
+                    <img 
+                      src={lot.imagens[0]} 
+                      alt={`${lot.marca} ${lot.modelo}`}
+                      className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105 cursor-pointer"
+                    />
+                  </Link>
                   <div className="absolute top-2 left-2">
                     <Badge variant={lot.tipo === 'Sucata para Desmonte' ? 'destructive' : 'default'} className="backdrop-blur-md bg-opacity-90">
                       {lot.tipo}
@@ -180,7 +182,9 @@ export function Lots() {
                 <CardHeader className="p-4 pb-2">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="font-semibold text-lg line-clamp-1 text-slate-800 dark:text-slate-100">{lot.marca} {lot.modelo}</h3>
+                      <Link to={`/lots/${lot.id}`} className="hover:underline">
+                        <h3 className="font-semibold text-lg line-clamp-1 text-slate-800 dark:text-slate-100">{lot.marca} {lot.modelo}</h3>
+                      </Link>
                       <p className="text-sm text-slate-500">{lot.ano}</p>
                     </div>
                     <span className="text-xs font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 px-2 py-1 rounded shadow-sm">Lote {lot.numeroLote}</span>

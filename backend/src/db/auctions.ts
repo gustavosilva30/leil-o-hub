@@ -86,7 +86,7 @@ export async function insertAuctionLots(lots: AuctionLot[]): Promise<number> {
 
 export async function fetchAuctionLots(limit = 100): Promise<AuctionLot[]> {
   const result = await query(
-    `SELECT source, source_lot_id, numero_lote, veiculo_origem, link_leilao, tipo_sucata, image_url,
+    `SELECT id, source, source_lot_id, numero_lote, veiculo_origem, link_leilao, tipo_sucata, image_url,
       auction_start_at, auction_end_at, fonte, marca, modelo, ano, placa, raw
       FROM auction_lots
       ORDER BY auction_start_at NULLS LAST, created_at DESC
@@ -95,4 +95,19 @@ export async function fetchAuctionLots(limit = 100): Promise<AuctionLot[]> {
   );
 
   return result.rows as AuctionLot[];
+}
+
+export async function fetchAuctionLotById(id: number): Promise<AuctionLot | null> {
+  const result = await query(
+    `SELECT id, source, source_lot_id, numero_lote, veiculo_origem, link_leilao, tipo_sucata, image_url,
+      auction_start_at, auction_end_at, fonte, marca, modelo, ano, placa, raw
+      FROM auction_lots
+      WHERE id = $1`,
+    [id]
+  );
+
+  if (result.rows.length === 0) {
+    return null;
+  }
+  return result.rows[0] as AuctionLot;
 }
