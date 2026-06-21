@@ -9,6 +9,16 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Root status
+app.get("/", (req, res) => {
+  res.json({
+    status: "ok",
+    service: "leilao-backend",
+    environment: config.NODE_ENV,
+    available: ["GET /health", "POST /api/auctions/sync/:source", "GET /api/auctions"]
+  });
+});
+
 // Rotas
 app.use("/api/auctions", auctionsRouter);
 
