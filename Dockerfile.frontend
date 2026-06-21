@@ -9,7 +9,6 @@ COPY src ./src
 COPY components ./components
 COPY hooks ./hooks
 COPY lib ./lib
-COPY assets ./assets
 
 RUN npm ci
 
