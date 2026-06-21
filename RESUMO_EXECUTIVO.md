@@ -46,7 +46,7 @@ graph TB
     end
 
     subgraph Database["💾 Banco de Dados"]
-        Supabase["Supabase"]
+        PostgreSQL["PostgreSQL"]
         AuctionTable["auction_lots"]
         SyncLogs["sync_logs"]
     end
@@ -128,7 +128,7 @@ graph TB
    POST https://leiloes-n8n.ini6ln.easypanel.host/...
    Body: { lotes: [{...}, {...}] }
    
-5. N8N → Supabase
+5. N8N → PostgreSQL
    INSERT/UPDATE auction_lots table
    Realtime event dispatchado
    
@@ -154,7 +154,7 @@ Backend: Extrai ~100 lotes com datas e imagens
   ↓
 Backend: Envia para N8N webhook
   ↓
-N8N: Processa, valida, salva no Supabase
+N8N: Processa, valida, salva no PostgreSQL
   ↓
 Frontend: Recebe realtime update
   ↓
@@ -211,7 +211,7 @@ Retorna:
 | **Escalabilidade** | Baixa | Alta (fácil adicionar site) |
 | **Cobertura** | Incompleta | Completa (Sodré, Copart, etc) |
 | **Validação** | Manual | Automática + N8N |
-| **Realtime** | Não | Sim (Supabase) |
+| **Realtime** | Não | Sim (PostgreSQL) |
 
 ---
 
@@ -269,7 +269,7 @@ Retorna:
 ### Segurança
 
 - ✅ N8N valida dados antes de salvar
-- ✅ Supabase com autenticação e RLS
+- ✅ PostgreSQL com autenticação e RLS
 - ✅ Variáveis de ambiente (sem hardcode de webhooks)
 - ✅ CORS configurado
 
@@ -288,7 +288,7 @@ Retorna:
 |-------|---------------|--------|-----------|
 | Site bloqueia scraper | Média | Alto | Usar Playwright stealth, rotacionar UA |
 | Webhook N8N cai | Baixa | Alto | Fila de retry (Bull), alertas |
-| Muitos lotes → lentidão | Média | Médio | Paginação DB, índices Supabase |
+| Muitos lotes → lentidão | Média | Médio | Paginação DB, índices PostgreSQL |
 | Parse HTML quebra | Média | Médio | Validação rigorosa, logs detalhados |
 | Duplicatas de lote | Média | Médio | Usar `numero_lote` como UNIQUE |
 
@@ -308,7 +308,7 @@ Retorna:
 
 ### Médio Prazo (Próximas 2 Semanas)
 - [ ] Frontend React (Fase 5)
-- [ ] Integração com Supabase
+- [ ] Integração com PostgreSQL
 - [ ] Testes E2E
 
 ### Longo Prazo (Produção)

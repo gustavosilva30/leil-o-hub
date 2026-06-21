@@ -88,7 +88,7 @@ Backend Express (3001)
         ↓ (POST webhook)
 N8N Workflow (seu webhook)
         ↓ (Processa & valida)
-Supabase (Banco de dados)
+PostgreSQL (Banco de dados)
         ↓ (Realtime events)
 Frontend React (atualiza tabela)
 ```
@@ -109,7 +109,7 @@ Frontend React (atualiza tabela)
 
 3. **Dados estruturados**
    - Padrão único: `numero_lote`, `veiculo_origem`, `link_leilao`, `tipo_sucata`, `image_url`, `auction_dates`
-   - Cabe perfeitamente em Supabase
+   - Cabe perfeitamente em PostgreSQL
 
 4. **Validação em 2 camadas**
    - TypeScript: validação local
@@ -163,7 +163,7 @@ Frontend React (atualiza tabela)
 ### Semana 3 (Validação)
 1. Fase 7: Variáveis de ambiente
 2. Fase 8: Testes completos
-3. Banco de dados (Supabase setup)
+3. Banco de dados (PostgreSQL setup)
 
 ### Produção
 1. N8N integration

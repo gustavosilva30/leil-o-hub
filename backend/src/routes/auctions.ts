@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { extrairDadosLeiloesMS, AuctionLot } from "@/services/leiloesScraper";
 import { extrairDadosSodre } from "@/services/sodreScraper";
+import { ensureAuctionLotsTable, insertAuctionLots, fetchAuctionLots } from "@/db/auctions";
 
 const router = Router();
 
@@ -9,6 +10,8 @@ router.post("/sync/:source", async (req: Request, res: Response) => {
   const { source } = req.params;
 
   try {
+    await ensureAuctionLotsTable();
+
     console.log(`🔄 Iniciando sync: ${source}`);
     
     let lotes: AuctionLot[] = [];
@@ -34,10 +37,13 @@ router.post("/sync/:source", async (req: Request, res: Response) => {
         return res.status(400).json({ error: "Source desconhecido" });
     }
 
+    const savedCount = await insertAuctionLots(lotes);
+
     res.json({ 
       success: true, 
       source, 
       count: lotes.length,
+      savedCount,
       lotes 
     });
   } catch (error: any) {
@@ -51,15 +57,15 @@ router.post("/sync/:source", async (req: Request, res: Response) => {
 });
 
 // GET /api/auctions (listar lotes)
-router.get("/", (req: Request, res: Response) => {
-  res.json({ 
-    message: "Busca no banco de dados - Implemente integração Supabase",
-    available_endpoints: [
-      "POST /api/auctions/sync/leiloes-ms",
-      "POST /api/auctions/sync/sodre",
-      "GET /api/auctions"
-    ]
-  });
+router.get("/", async (req: Request, res: Response) => {
+  try {
+    await ensureAuctionLotsTable();
+    const lotes = await fetchAuctionLots(100);
+    res.json({ success: true, count: lotes.length, lotes });
+  } catch (error: any) {
+    console.error("❌ Erro ao buscar lotes:", error.message);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // POST /api/auctions/webhook/n8n (receber dados processados)

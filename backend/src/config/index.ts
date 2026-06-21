@@ -5,6 +5,7 @@ dotenv.config();
 export const config = {
   PORT: parseInt(process.env.PORT || "3001", 10),
   NODE_ENV: process.env.NODE_ENV || "development",
+  DATABASE_URL: process.env.DATABASE_URL || "",
   
   // Webhooks N8N
   WEBHOOK_N8N_LEILOES_MS: 
@@ -28,10 +29,6 @@ export const config = {
   WEBHOOK_N8N_MARCA_LEILOES:
     process.env.WEBHOOK_N8N_MARCA_LEILOES ||
     "https://n8n.douradosap.com.br/webhook/receber-marca-leiloes",
-
-  // Supabase (se usar)
-  SUPABASE_URL: process.env.SUPABASE_URL,
-  SUPABASE_KEY: process.env.SUPABASE_KEY,
 };
 
 export default config;

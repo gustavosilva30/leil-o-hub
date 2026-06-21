@@ -32,7 +32,7 @@ Scraper (TS)
   ↓ (POST)
 Webhook N8N
   ↓ (Processa)
-Banco de Dados (Supabase provavelmente)
+Banco de Dados (PostgreSQL na VPS)
   ↓
 Frontend React (seu projeto)
 ```
@@ -96,7 +96,7 @@ POST /api/auctions/sync/superbid
 O N8N recebe JSON com `lotes: []` e:
 - ✅ Valida dados
 - ✅ Normaliza (remove acentos, formatos)
-- ✅ Insere/atualiza banco (Supabase)
+- ✅ Insere/atualiza banco (PostgreSQL)
 - ✅ Notifica frontend via realtime
 
 ---
@@ -135,7 +135,7 @@ POST /api/auctions/sync/sodre            → dispara extrairDadosSodre()
 POST /api/auctions/sync/superbid         → dispara extrairDadosSuperbid()
 POST /api/auctions/webhook/n8n           ← recebe payload do N8N (upsert lotes)
 
-GET  /api/auctions                       → lista lotes do Supabase
+GET  /api/auctions                       → lista lotes do PostgreSQL
 GET  /api/auctions/:id                   → detalhe do lote
 ```
 
@@ -154,19 +154,15 @@ const syncLeiloes = async (source: 'leiloes-ms' | 'sodre' | 'superbid') => {
 }
 ```
 
-#### **4. Supabase Realtime**
+#### **4. Realtime com PostgreSQL / Websocket**
 
-O N8N pode usar a API do Supabase para inserir/atualizar, e o frontend escuta em tempo real:
+O N8N pode usar a API do PostgreSQL para inserir/atualizar, e o frontend escuta em tempo real via WebSocket ou outro canal de notificação:
 
 ```typescript
-const supabase = createClient(...)
-
-supabase
-  .from('auction_lots')
-  .on('*', (payload) => {
-    // Atualiza lista em tempo real
-  })
-  .subscribe()
+// Exemplo com websocket ou serviço de notificação
+socket.on('auction_lots_updated', (payload) => {
+  // Atualiza lista em tempo real
+})
 ```
 
 ---
@@ -181,8 +177,8 @@ supabase
 
 ### **Fase 2: Integração Backend**
 - [ ] Rotas Express (sync, webhook, list, search)
-- [ ] Variáveis de env (SUPABASE_URL, SUPABASE_KEY, WEBHOOK_N8N)
-- [ ] Conexão com Supabase (ou SQLite/PostgreSQL local)
+- [ ] Variáveis de env (DATABASE_URL, WEBHOOK_N8N)
+- [ ] Conexão com PostgreSQL (ou SQLite local)
 
 ### **Fase 3: Frontend React**
 - [ ] Hook `useAuctions()` para buscar lotes
@@ -218,7 +214,7 @@ supabase
     "cheerio": "^1.0.0",
     "playwright": "^1.40.0",
     "express": "^4.18.0",
-    "supabase": "^2.38.0",
+    "pg": "^8.11.1",
     "node-schedule": "^2.1.0"
   }
 }

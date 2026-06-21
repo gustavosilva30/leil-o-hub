@@ -71,7 +71,7 @@ Criei **6 documentos** com ~2000+ linhas de análise e código:
 ✅ Como funciona o webhook N8N  
 ✅ Estrutura de dados padronizada  
 ✅ Arquitetura React + Express  
-✅ Banco de dados (Supabase)  
+✅ Banco de dados (PostgreSQL)  
 ✅ Automação com scheduler  
 
 ### Sobre Implementação

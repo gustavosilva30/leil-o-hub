@@ -174,10 +174,6 @@ export const config = {
   WEBHOOK_N8N_MARCA_LEILOES:
     process.env.WEBHOOK_N8N_MARCA_LEILOES ||
     "https://n8n.douradosap.com.br/webhook/receber-marca-leiloes",
-
-  // Supabase (se usar)
-  SUPABASE_URL: process.env.SUPABASE_URL,
-  SUPABASE_KEY: process.env.SUPABASE_KEY,
 };
 
 export default config;
@@ -301,9 +297,9 @@ router.post("/sync/:source", async (req: Request, res: Response) => {
   }
 });
 
-// GET /api/auctions (listar lotes — conectar ao Supabase depois)
+// GET /api/auctions (listar lotes — conectar ao PostgreSQL depois)
 router.get("/", (req: Request, res: Response) => {
-  res.json({ message: "Implemente busca no Supabase" });
+  res.json({ message: "Implemente busca no PostgreSQL" });
 });
 
 // POST /api/auctions/webhook/n8n (receber dados processados)
@@ -571,9 +567,8 @@ WEBHOOK_N8N_LEILOES_MS=https://leiloes-n8n.ini6ln.easypanel.host/webhook-test/ca
 WEBHOOK_N8N_SODRE=https://seu-webhook-sodre.com
 # ... etc
 
-# Supabase (para salvar dados)
-SUPABASE_URL=https://sua-instancia.supabase.co
-SUPABASE_KEY=sua-chave-publica
+# PostgreSQL (para salvar dados)
+DATABASE_URL=postgres://usuario:senha@host:port/database
 ```
 
 ---
@@ -637,7 +632,7 @@ npm run dev
 - [ ] Verificar logs a cada 2h
 
 ### Banco de Dados
-- [ ] Conectar Supabase (criar tabela `auction_lots`)
+- [ ] Conectar PostgreSQL (criar tabela `auction_lots`)
 - [ ] Implementar webhook N8N → DB
 - [ ] Realtime listening no React
 
@@ -645,7 +640,7 @@ npm run dev
 
 ## 🚀 Próximos Passos (Fase 9)
 
-1. **Replicar estrutura do banco** (Supabase)
+1. **Replicar estrutura do banco** (PostgreSQL)
    ```sql
    CREATE TABLE auction_lots (
      id UUID PRIMARY KEY,

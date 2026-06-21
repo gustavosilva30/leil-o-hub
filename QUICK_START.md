@@ -357,7 +357,7 @@ Depois de confirmar que funciona:
 
 1. **Adicionar 6 outros scrapers** (copiar + adaptar)
 2. **Frontend React** (hook + componente)
-3. **Banco de dados** (Supabase)
+3. **Banco de dados** (PostgreSQL)
 4. **Automação** (scheduler)
 
 Mas isso é assunto para outro dia! 😄

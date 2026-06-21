@@ -42,7 +42,7 @@ curl -X POST http://localhost:3001/api/auctions/sync/leiloes-ms
 ```
 
 ### GET `/api/auctions`
-Listar lotes (a implementar com Supabase)
+Listar lotes (a implementar com PostgreSQL)
 
 ### POST `/api/auctions/webhook/n8n`
 Webhook para receber dados do N8N
@@ -70,11 +70,14 @@ Copie `.env.example` para `.env` e configure:
 ```
 PORT=3001
 NODE_ENV=development
+DATABASE_URL=postgres://usuario:senha@host:port/database
 
 WEBHOOK_N8N_LEILOES_MS=...
 WEBHOOK_N8N_SODRE=...
 # etc
 ```
+
+> `DATABASE_URL` é necessária para gravar os lotes no PostgreSQL.
 
 ## Scrapers Disponíveis
 
@@ -112,7 +115,34 @@ npm install
 
 ## Deploy
 
-Será adicionado em fases futuras (Docker, PM2, etc)
+### Produção com Docker Compose
+
+Crie um arquivo `.env.prod` na raiz do projeto com os valores de produção:
+
+```env
+# .env.prod
+VITE_API_URL=https://appleilao.gsntech.com.br/api/auctions
+PORT=3001
+NODE_ENV=production
+DATABASE_URL=postgres://usuario:senha@host:port/database
+WEBHOOK_N8N_SODRE=https://seu-webhook-sodre.com
+WEBHOOK_N8N_LEILOES_MS=https://seu-webhook-leiloes-ms.com
+```
+
+Depois execute:
+
+```bash
+docker compose --env-file .env.prod -f docker-compose.prod.yml up --build -d
+```
+
+### Observações
+
+- O backend fica exposto na porta `3001`
+- O frontend fica exposto na porta `80`
+- `VITE_API_URL` é inserido no build do frontend via `.env.prod`
+- Se usar EasyPanel, configure os domínios com as portas/paths corretos
+
+---
 
 ---
 

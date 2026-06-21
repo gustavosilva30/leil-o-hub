@@ -43,7 +43,7 @@ Recebe payload do N8N quando os dados estiverem processados e prontos.
    - Use um nó `Set` ou `Function` para ajustar o formato.
 
 4. **Salvar em banco**
-   - Exemplo: `Supabase`, `PostgreSQL`, `MySQL` ou outro.
+   - Exemplo: `PostgreSQL`, `MySQL` ou outro.
    - Cada lote deve ser inserido/atualizado.
 
 5. **Resposta final**
@@ -101,6 +101,6 @@ curl -X POST http://<backend-host>:3001/api/auctions/sync/leiloes-ms
 
 ## 7. Melhorias futuras
 
-- Adicionar persistência em Supabase/PostgreSQL
+- Adicionar persistência em PostgreSQL
 - Criar workflow N8N para cada fonte separadamente
 - Implementar retry e filas no backend

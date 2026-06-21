@@ -1,0 +1,16 @@
+id,name,url,priority,type,notes,requires
+superbid,Superbid,https://www.superbid.com.br,Alta,marketplace,"Plataforma dinâmica; muitas páginas carregam via JS — Playwright recomendado; API privada possível por parceria.",Playwright
+copart,Copart Brasil,https://www.copart.com.br,Alta,marketplace,"Alto volume; parte do conteúdo via JS; verificar endpoints XHR internos; parceria útil.","Playwright / Axios"
+sodre,Sodré Santoro,https://www.sodresantoro.com.br,Alta,house,"Site regional com buscas e listagem; já existe scraper no projeto; Playwright usado anteriormente.",Playwright
+autotran,AutoTran Leilões,https://autotranleiloes.org,Alta,house,"Foco em veículos; pode ter páginas estáticas e dinâmicas; já tem scraper histórico.","Axios + Cheerio / Playwright"
+pestana,Pestana Leilões,https://pestanaleiloes.com.br,Alta,house,"Leiloeiro com sessões por região; páginas geralmente estáticas.","Axios + Cheerio"
+marca_leiloes,Marca Leilões,https://marcaleiloes.com.br,Alta,house,"Presença nacional; verificar endpoints de listagem e detalhes.","Axios + Cheerio"
+leiloes_ms,Leilões MS,https://leiloesonlinems.com.br,Alta,project_internal,"Fonte já integrada no projeto; manter compatibilidade e reaproveitar código.","Axios + Cheerio"
+zukerman,Zukerman Leilões,https://www.zukerman.com.br,Média,house,"Casa grande com muitas sessões; consultar formato de página e calendário.","Axios + Cheerio / Playwright"
+tribunais,Portais Judiciais (TJs),https://www.tjrs.jus.br (exemplo),Alta,public,"Leilões judiciais contendo veículos apreendidos; importante fonte oficial.","Axios + Cheerio"
+detran,DETRAN (estaduais),https://www.detran.sp.gov.br (exemplo),Alta,public,"Leilões de veículos apreendidos; variação entre estados exige adaptadores.","Axios + Cheerio"
+prefeituras,Prefeituras / Órgãos Municipais,varios portais municipais,Média,public,"Leilões e vendas públicas de prefeituras; fontes dispersas.","Axios + Cheerio"
+freitas,Freitas Leilões,https://www.freitasleiloes.com.br,Média,house,"Leiloeiro regional com lotes veiculares.","Axios + Cheerio"
+megaleiloes,Megaleilões,https://www.megaleiloes.com.br,Média,platform,"Plataforma de leilões com várias categorias.","Axios + Cheerio / Playwright"
+leilaovip,LeilãoVIP / LanceVIP,https://www.leilaovip.com.br,Média,platform,"Players regionais/online com lotes de sucata.","Axios + Cheerio"
+agregadores,Agregadores / LeiloesBrasil,https://www.leiloesbrasil.com.br (exemplo),Média,aggregator,"Agregadores podem fornecer ponte para múltiplas fontes, útil para descoberta rápida.","Axios + Cheerio"

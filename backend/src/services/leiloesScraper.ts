@@ -9,7 +9,7 @@ const HEADERS     = { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) A
 
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
-// Função para converter "25/03/2026 14:00" em ISO String para o Supabase
+// Função para converter "25/03/2026 14:00" em ISO 8601
 function parseDataBr(texto: string): string | null {
     try {
         const match = texto.match(/(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}:\d{2})/);
@@ -57,6 +57,8 @@ function textoPlano(html: string): string {
 }
 
 export interface AuctionLot {
+    source?: string;
+    source_lot_id?: string;
     numero_lote: string;
     veiculo_origem: string;
     link_leilao: string;
@@ -65,6 +67,11 @@ export interface AuctionLot {
     auction_start_at: string | null;
     auction_end_at: string | null;
     fonte: string;
+    marca?: string | null;
+    modelo?: string | null;
+    ano?: string | null;
+    placa?: string | null;
+    raw?: any;
 }
 
 export const extrairDadosLeiloesMS = async (): Promise<AuctionLot[]> => {
@@ -130,6 +137,8 @@ export const extrairDadosLeiloesMS = async (): Promise<AuctionLot[]> => {
             if (!isSucataVeicularValida(textoParaValidacao)) continue;
 
             veiculosEncontrados.push({
+                source: "leiloes-ms",
+                source_lot_id: numeroLoteBlindado,
                 numero_lote: numeroLoteBlindado,
                 veiculo_origem: tituloLimpo.slice(0, 120),
                 link_leilao: linkCompleto,
@@ -137,7 +146,11 @@ export const extrairDadosLeiloesMS = async (): Promise<AuctionLot[]> => {
                 image_url: imageUrl,
                 auction_start_at: dataInicio,
                 auction_end_at: dataFim,
-                fonte: "Leilões MS"
+                fonte: "Leilões MS",
+                raw: {
+                    title: tituloOriginal,
+                    link: linkCompleto,
+                },
             });
         }
 

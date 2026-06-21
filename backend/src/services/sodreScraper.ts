@@ -114,18 +114,32 @@ export const extrairDadosSodre = async (): Promise<AuctionLot[]> => {
         const numeroLote = numeroLoteBruto ? `${numeroLoteBruto}-${carro.lot_id}` : String(carro.lot_id);
         const link = `https://www.sodresantoro.com.br/leilao/${carro.auction_id}/lote/${carro.lot_id}/`;
 
-        if (!numeroLote || !foto) continue;
+        if (!numeroLote) continue;
+
+        const imageUrl = foto || "";
+        const maybeMarca = carro.brand || carro.make || carro.manufacturer || null;
+        const maybeModelo = carro.model || carro.modelo || null;
+        const maybeAno = carro.year || carro.year_manufacture || carro.model_year || null;
+        const maybePlaca = carro.plate || carro.license_plate || null;
 
         veiculosEncontrados.push({
+          source: "sodre",
           numero_lote: String(numeroLote),
           veiculo_origem: titulo.slice(0, 120),
           link_leilao: link,
           tipo_sucata: mapearTipoSucata(titulo),
-          image_url: foto,
+          image_url: imageUrl,
           auction_start_at: formatarData(carro.auction_date_init),
           auction_end_at: formatarData(carro.auction_date_limit || carro.auction_date_end),
           fonte: "Sodré Santoro",
-        });
+          // adicionais para enriquecer o registro
+          source_lot_id: String(carro.lot_id),
+          marca: maybeMarca,
+          modelo: maybeModelo,
+          ano: maybeAno,
+          placa: maybePlaca,
+          raw: carro,
+        } as unknown as AuctionLot);
       }
     }
   } catch (error: any) {

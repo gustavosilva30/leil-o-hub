@@ -12,7 +12,7 @@ COPY lib ./lib
 
 RUN npm ci
 
-ARG VITE_API_URL=http://backend:3001/api/auctions
+ARG VITE_API_URL="http://localhost:3001/api/auctions"
 ENV VITE_API_URL=$VITE_API_URL
 
 RUN npm run build

@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import config from "@/config/index";
 import auctionsRouter from "@/routes/auctions";
+import { ensureAuctionLotsTable } from "@/db/auctions";
 
 const app = express();
 
@@ -44,11 +45,20 @@ app.use((req, res) => {
   });
 });
 
-// Start server
-app.listen(config.PORT, () => {
-  console.log(`🚀 Backend rodando em http://localhost:${config.PORT}`);
-  console.log(`📊 Ambiente: ${config.NODE_ENV}`);
-  console.log(`📝 Webhooks N8N configurados`);
-});
+async function startServer() {
+  try {
+    await ensureAuctionLotsTable();
+    app.listen(config.PORT, () => {
+      console.log(`🚀 Backend rodando em http://localhost:${config.PORT}`);
+      console.log(`📊 Ambiente: ${config.NODE_ENV}`);
+      console.log(`📝 Webhooks N8N configurados`);
+    });
+  } catch (error: any) {
+    console.error("❌ Falha ao inicializar o banco de dados:", error.message || error);
+    process.exit(1);
+  }
+}
+
+startServer();
 
 export default app;

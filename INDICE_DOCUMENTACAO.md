@@ -191,7 +191,7 @@ leilão-hub-brasil/
 - [ ] **Fase 8**: Testes (30 min)
 
 ### Pós-Implementação
-- [ ] Banco de dados (Supabase)
+- [ ] Banco de dados (PostgreSQL)
 - [ ] N8N integration
 - [ ] Realtime listening
 - [ ] Deploy produção
