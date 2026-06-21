@@ -1,0 +1,6 @@
+{
+  "name": "Leilão Hub Brasil",
+  "description": "SaaS B2B aggregator for vehicle auctions, scraps, and documented vehicles in Brazil.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
