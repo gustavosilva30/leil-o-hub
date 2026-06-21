@@ -60,7 +60,8 @@ router.post("/sync/:source", async (req: Request, res: Response) => {
 router.get("/", async (req: Request, res: Response) => {
   try {
     await ensureAuctionLotsTable();
-    const lotes = await fetchAuctionLots(100);
+    const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 1000;
+    const lotes = await fetchAuctionLots(limit);
     res.json({ success: true, count: lotes.length, lotes });
   } catch (error: any) {
     console.error("❌ Erro ao buscar lotes:", error.message);
