@@ -155,11 +155,16 @@ export const extrairDadosLeiloesMS = async (): Promise<AuctionLot[]> => {
         }
 
         if (veiculosEncontrados.length > 0) {
-            try {
-                await axios.post(config.WEBHOOK_N8N_LEILOES_MS, { lotes: veiculosEncontrados });
-                console.log(`🚀 [LeiloesMS] ${veiculosEncontrados.length} lotes enviados para o N8N!`);
-            } catch (err) {
-                console.error("[LeiloesMS] Erro ao enviar para o N8N:", err);
+            const chunkSize = 15;
+            console.log(`🚀 [LeiloesMS] Enviando ${veiculosEncontrados.length} lotes em lotes de ${chunkSize}...`);
+            for (let i = 0; i < veiculosEncontrados.length; i += chunkSize) {
+                const chunk = veiculosEncontrados.slice(i, i + chunkSize);
+                try {
+                    await axios.post(config.WEBHOOK_N8N_LEILOES_MS, { lotes: chunk });
+                    console.log(`🚀 [LeiloesMS] Grupo ${Math.floor(i / chunkSize) + 1} enviado com sucesso!`);
+                } catch (err: any) {
+                    console.error(`❌ [LeiloesMS] Erro ao enviar grupo ${Math.floor(i / chunkSize) + 1}:`, err?.message || err);
+                }
             }
         } else {
             console.log("⚠️ [LeiloesMS] Nenhum lote novo processado.");
