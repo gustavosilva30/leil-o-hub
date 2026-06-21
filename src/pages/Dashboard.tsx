@@ -1,13 +1,22 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { LOTS, PURCHASES, ALERTS, CURRENT_TENANT } from '@/src/data/mock';
+import { PURCHASES, ALERTS, CURRENT_TENANT } from '@/src/data/mock';
+import { useAuctions } from '@/src/hooks/useAuctions';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { Heart, BellRing, TrendingUp, Gavel, FileText, ShoppingCart, Wrench } from 'lucide-react';
 
 export function Dashboard() {
+  const { lotes } = useAuctions();
   const comprasAndamento = PURCHASES.filter(p => p.status !== 'FINALIZADO').length;
   const emDesmontagem = PURCHASES.filter(p => p.status === 'EM DESMONTAGEM').length;
 
-  const barData = Object.keys(LOTS.reduce((acc, lot) => { acc[lot.estado] = (acc[lot.estado] || 0) + 1; return acc; }, {} as Record<string, number>)).map(k => ({ name: k, total: LOTS.filter(l=>l.estado===k).length }));
+  const barData = Object.keys(lotes.reduce((acc, lot) => { 
+    const key = lot.source || 'Outro';
+    acc[key] = (acc[key] || 0) + 1; 
+    return acc; 
+  }, {} as Record<string, number>)).map(k => ({ 
+    name: k, 
+    total: lotes.filter(l => (l.source || 'Outro') === k).length 
+  }));
 
   const lineData = [
     { name: 'Jan', compras: 2 }, { name: 'Fev', compras: 5 }, { name: 'Mar', compras: 3 },
@@ -48,7 +57,7 @@ export function Dashboard() {
         <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
           <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Lotes Monitorados</p>
           <div className="flex items-end justify-between">
-            <span className="text-3xl font-bold text-slate-800 dark:text-slate-100">{LOTS.length}</span>
+            <span className="text-3xl font-bold text-slate-800 dark:text-slate-100">{lotes.length}</span>
             <span className="text-xs font-bold text-slate-600 bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded-full">Ativos</span>
           </div>
         </div>

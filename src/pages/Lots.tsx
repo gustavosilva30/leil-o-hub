@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { LOTS, BRANDS, STATES, AUCTIONEERS } from '@/src/data/mock';
+import { BRANDS, STATES, AUCTIONEERS } from '@/src/data/mock';
+import { useAuctions } from '@/src/hooks/useAuctions';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -14,8 +15,25 @@ import { Link } from 'react-router-dom';
 
 export function Lots() {
   const [view, setView] = useState<'grid' | 'list'>('grid');
-  // Simple pagination / infinite scroll mock
-  const displayedLots = LOTS.slice(0, 24);
+  const { lotes } = useAuctions();
+
+  const transformedLots = lotes.map((l: any, i: number) => ({
+    id: l.id || `L-${i}`,
+    numeroLote: l.numero_lote,
+    marca: l.marca || l.veiculo_origem?.split(' ')[0] || 'Desconhecida',
+    modelo: l.modelo || l.veiculo_origem || 'Lote',
+    ano: l.ano || 'N/A',
+    estado: l.source || 'N/A',
+    cidade: l.fonte || 'N/A',
+    tipo: l.tipo_sucata === 'inservivel' ? 'Inservível' : 'Aproveitável',
+    leiloeiro: l.fonte || l.source,
+    imagens: l.image_url ? [l.image_url] : ['https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=800&h=600'],
+    valorEstimado: 0,
+    lanceAtual: 0,
+    dataLeilao: l.auction_start_at || l.auction_end_at || new Date().toISOString(),
+  }));
+
+  const displayedLots = transformedLots.slice(0, 24);
 
   return (
     <div className="flex flex-col md:flex-row gap-6 h-full">
@@ -110,7 +128,7 @@ export function Lots() {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-2xl font-bold tracking-tight">Lotes Nacionais</h2>
-            <p className="text-sm text-muted-foreground">{LOTS.length} lotes encontrados em todo o Brasil</p>
+            <p className="text-sm text-muted-foreground">{transformedLots.length} lotes encontrados em todo o Brasil</p>
           </div>
           
           <div className="flex items-center gap-2">

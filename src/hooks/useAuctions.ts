@@ -58,7 +58,7 @@ export function useAuctions() {
   });
 
   return {
-    lotes: lotes || [],
+    lotes: lotes?.lotes || [],
     loadingLotes,
     sync,
     isPending,
