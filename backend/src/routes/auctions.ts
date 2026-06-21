@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import { extrairDadosLeiloesMS, AuctionLot } from "@/services/leiloesScraper";
+import { extrairDadosSodre } from "@/services/sodreScraper";
 
 const router = Router();
 
@@ -17,6 +18,8 @@ router.post("/sync/:source", async (req: Request, res: Response) => {
         lotes = await extrairDadosLeiloesMS();
         break;
       case "sodre":
+        lotes = await extrairDadosSodre();
+        break;
       case "superbid":
       case "copart":
       case "autotran":
@@ -53,6 +56,7 @@ router.get("/", (req: Request, res: Response) => {
     message: "Busca no banco de dados - Implemente integração Supabase",
     available_endpoints: [
       "POST /api/auctions/sync/leiloes-ms",
+      "POST /api/auctions/sync/sodre",
       "GET /api/auctions"
     ]
   });
