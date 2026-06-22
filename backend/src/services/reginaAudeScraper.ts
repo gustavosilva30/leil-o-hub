@@ -29,25 +29,31 @@ function toAbs(href: string): string {
     return PREFIXO + "/" + href;
 }
 
-function extrairPrimeiraImagem(html: string): string {
+function extrairTodasImagens(html: string): string[] {
     const $ = cheerio.load(html);
+    const images: string[] = [];
+    
     const ogImage = $('meta[property="og:image"]').attr("content");
     if (ogImage && (ogImage.includes(".jpg") || ogImage.includes(".jpeg") || ogImage.includes(".png"))) {
-        return toAbs(ogImage);
+        const absOg = toAbs(ogImage);
+        if (absOg) images.push(absOg);
     }
-    let imageSrc = "";
+    
     $("img").each((_, el) => {
         const src = $(el).attr("src") || $(el).attr("data-src") || "";
         const srcLower = src.toLowerCase();
         if (
             (srcLower.includes(".jpg") || srcLower.includes(".jpeg") || srcLower.includes(".png")) &&
-            !srcLower.includes("logo")
+            !srcLower.includes("logo") &&
+            !srcLower.includes("banner")
         ) {
-            imageSrc = src;
-            return false;
+            const absSrc = toAbs(src);
+            if (absSrc && !images.includes(absSrc)) {
+                images.push(absSrc);
+            }
         }
     });
-    return imageSrc ? toAbs(imageSrc) : "";
+    return images;
 }
 
 function textoPlano(html: string): string {
@@ -103,7 +109,7 @@ export const extrairDadosReginaAude = async (): Promise<AuctionLot[]> => {
             const idUnicoURL = partes[partes.length - 1]; 
             const numeroLoteBlindado = `${numeroLoteBruto}-${idUnicoURL}`.slice(0, 50);
 
-            let imageUrl = "";
+            let imagens: string[] = [];
             let dataInicio: string | null = null;
             let dataFim: string | null = null;
             let textoPagina = "";
@@ -113,7 +119,7 @@ export const extrairDadosReginaAude = async (): Promise<AuctionLot[]> => {
                 const { data } = await axios.get(linkCompleto, { headers: HEADERS });
                 const $lote = cheerio.load(data as string);
                 
-                imageUrl = extrairPrimeiraImagem(data as string);
+                imagens = extrairTodasImagens(data as string);
                 textoPagina = textoPlano(data as string);
 
                 const sectionDatas = $lote(".infos-leilao, .datas-leilao, body").text().toUpperCase();
@@ -141,13 +147,14 @@ export const extrairDadosReginaAude = async (): Promise<AuctionLot[]> => {
                 veiculo_origem: tituloLimpo.slice(0, 120),
                 link_leilao: linkCompleto,
                 tipo_sucata: mapearTipoSucata(textoParaValidacao), 
-                image_url: imageUrl,
+                image_url: imagens[0] || "",
                 auction_start_at: dataInicio,
                 auction_end_at: dataFim,
                 fonte: "Regina Aude Leilões",
                 raw: {
                     title: tituloOriginal,
                     link: linkCompleto,
+                    lot_pictures: imagens
                 },
             });
         }

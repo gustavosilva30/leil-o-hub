@@ -156,15 +156,24 @@ export async function extrairDadosMarcaLeiloes(): Promise<AuctionLot[]> {
         const veiculoNome = extrairModeloVeiculo(descText, titleText);
         const numeroLote = loteObj?.numero ? String(loteObj.numero) : (link.match(/lote\/(\d+)/i)?.[1] || `ML-${Math.floor(1000 + Math.random() * 9000)}`);
         
+        const images: string[] = [];
         let imageUrl = loteObj?.leilao?.stats?.lote?.bem?.image?.full?.url || loteObj?.leilao?.stats?.lote?.bem?.image?.min?.url || "";
-        if (!imageUrl) {
-          $lot("img").each((_, imgEl) => {
-            const src = $lot(imgEl).attr("src") || "";
-            if (src && (src.includes(".jpg") || src.includes(".png") || src.includes(".jpeg")) && !src.includes("logo")) {
-              imageUrl = src.startsWith("http") ? src : new URL(src, BASE_URL).toString();
-              return false; 
+        if (imageUrl) {
+          images.push(imageUrl);
+        }
+
+        $lot("img").each((_, imgEl) => {
+          const src = $lot(imgEl).attr("src") || "";
+          if (src && (src.includes(".jpg") || src.includes(".png") || src.includes(".jpeg")) && !src.includes("logo") && !src.includes("icon") && !src.includes("banner")) {
+            const absSrc = src.startsWith("http") ? src : new URL(src, BASE_URL).toString();
+            if (!images.includes(absSrc)) {
+              images.push(absSrc);
             }
-          });
+          }
+        });
+
+        if (images.length > 0 && !imageUrl) {
+          imageUrl = images[0];
         }
 
         const parseDate = (dObj: any) => {
@@ -188,10 +197,12 @@ export async function extrairDadosMarcaLeiloes(): Promise<AuctionLot[]> {
           cor: cor || null,
           marca: marca || null,
           modelo: modelo || null,
-          raw: loteObj || {
+          raw: {
+            ...(loteObj || {}),
             title: titleText,
             url: link,
-            description: descText
+            description: descText,
+            lot_pictures: images
           }
         };
 

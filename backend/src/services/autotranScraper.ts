@@ -98,13 +98,17 @@ export async function extrairDadosAutoTran(): Promise<AuctionLot[]> {
           continue;
         }
 
-        let imageUrl = "";
+        const images: string[] = [];
         $lot("img").each((_, el) => {
           const src = $lot(el).attr("src") || "";
-          if (src.includes("/PHPs/") && !imageUrl) {
-            imageUrl = src.startsWith("http") ? src : new URL(src, BASE_URL).toString();
+          if (src.includes("/PHPs/")) {
+            const absSrc = src.startsWith("http") ? src : new URL(src, BASE_URL).toString();
+            if (!images.includes(absSrc)) {
+              images.push(absSrc);
+            }
           }
         });
+        const imageUrl = images[0] || "";
 
         const bodyText = $lot("body").text().replace(/\s+/g, ' ');
 
@@ -133,7 +137,8 @@ export async function extrairDadosAutoTran(): Promise<AuctionLot[]> {
           raw: {
             title,
             category,
-            url: link
+            url: link,
+            lot_pictures: images
           }
         };
 

@@ -181,12 +181,12 @@ export async function extrairDadosMilanLeiloes(): Promise<AuctionLot[]> {
               .trim();
             const textoClassificacao = `${titulo} ${descricaoLimpa}`;
 
-            // URL da imagem — o endpoint siteback requer auth, mas a URL é válida para o browser
-            const primeiraFoto = data.fotos?.[0]?.arquivoFoto;
+            // URL da imagem pública do Milan Leilões no domínio www.milanleiloes.com.br
             const folder = localFotos || String(codLeilao);
-            const imageUrl = primeiraFoto
-              ? `${BASE_API}/fotos/${folder}/${primeiraFoto}`
-              : "";
+            const images: string[] = (data.fotos || []).map(f => {
+              return `https://www.milanleiloes.com.br/arquivos/fotos/${folder}/${f.arquivoFoto}`;
+            });
+            const imageUrl = images[0] || "";
 
             const { marca, modelo, ano } = extrairMarcaModeloAno(titulo);
 
@@ -206,7 +206,10 @@ export async function extrairDadosMilanLeiloes(): Promise<AuctionLot[]> {
               ano,
               placa: null,
               chassi: null,
-              raw: data,
+              raw: {
+                ...data,
+                lot_pictures: images
+              },
             } as unknown as AuctionLot;
 
             veiculosEncontrados.push(lot);
