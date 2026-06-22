@@ -8,8 +8,8 @@ import { useState } from "react";
 const SOURCES = [
   { id: "leiloes-ms", label: "Leilões MS", color: "bg-blue-500" },
   { id: "sodre", label: "Sodré", color: "bg-purple-500" },
-  { id: "superbid", label: "Superbid", color: "bg-green-500", disabled: true },
-  { id: "copart", label: "Copart", color: "bg-orange-500", disabled: true },
+  { id: "superbid", label: "Superbid", color: "bg-green-500" },
+  { id: "copart", label: "Copart", color: "bg-orange-500" },
   { id: "autotran", label: "AutoTran", color: "bg-red-500", disabled: true },
   { id: "pestana", label: "Pestana", color: "bg-pink-500", disabled: true },
   { id: "marca-leiloes", label: "Marca Leilões", color: "bg-indigo-500" },

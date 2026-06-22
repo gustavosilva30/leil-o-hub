@@ -3,6 +3,7 @@ import { extrairDadosLeiloesMS } from "@/services/leiloesScraper";
 import { extrairDadosSodre } from "@/services/sodreScraper";
 import { extrairDadosMarcaLeiloes } from "@/services/marcaLeiloesScraper";
 import { extrairDadosCopart } from "@/services/copartScraper";
+import { extrairDadosSuperbid } from "@/services/superbidScraper";
 import { ensureAuctionLotsTable, insertAuctionLots, deleteExpiredAuctionLots } from "@/db/auctions";
 
 export function initScheduler() {
@@ -47,6 +48,13 @@ export function initScheduler() {
         return [];
       });
       await insertAuctionLots(lotsCopart);
+
+      console.log("⏰ [Scheduler] Sincronizando Superbid...");
+      const lotsSuperbid = await extrairDadosSuperbid().catch(err => {
+        console.error("Erro ao rodar Superbid:", err.message);
+        return [];
+      });
+      await insertAuctionLots(lotsSuperbid);
 
       console.log("⏰ [Scheduler] Sincronização diária finalizada com sucesso!");
     } catch (error: any) {
