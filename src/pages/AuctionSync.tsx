@@ -7,6 +7,7 @@ import { useState } from "react";
 
 const SOURCES = [
   { id: "leiloes-ms", label: "Leilões MS", color: "bg-blue-500" },
+  { id: "regina-aude", label: "Regina Aude", color: "bg-rose-500" },
   { id: "sodre", label: "Sodré", color: "bg-purple-500" },
   { id: "superbid", label: "Superbid", color: "bg-green-500" },
   { id: "copart", label: "Copart", color: "bg-orange-500" },
@@ -37,7 +38,7 @@ export default function AuctionSync() {
       {/* Botões de Sync */}
       <div className="mb-8">
         <h2 className="text-xl font-semibold mb-4">Fontes de Leilões</h2>
-        <div className="grid grid-cols-2 gap-2 md:grid-cols-7">
+        <div className="flex flex-wrap gap-2">
           {SOURCES.map((src) => (
             <Button
               key={src.id}
