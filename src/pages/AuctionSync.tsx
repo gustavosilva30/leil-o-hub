@@ -13,6 +13,7 @@ const SOURCES = [
   { id: "autotran", label: "AutoTran", color: "bg-red-500", disabled: true },
   { id: "pestana", label: "Pestana", color: "bg-pink-500", disabled: true },
   { id: "marca-leiloes", label: "Marca Leilões", color: "bg-indigo-500" },
+  { id: "via-leiloes", label: "Via Leilões", color: "bg-teal-500" },
 ];
 
 export default function AuctionSync() {

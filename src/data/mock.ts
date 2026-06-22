@@ -33,7 +33,9 @@ export const AUCTIONEERS: Auctioneer[] = [
   { id: 'AUC-2', nome: 'Sodré Santoro', site: 'https://sodresantoro.com.br', estado: 'SP' },
   { id: 'AUC-3', nome: 'Milan Leilões', site: 'https://milanleiloes.com.br', estado: 'SP' },
   { id: 'AUC-4', nome: 'Pestana Leilões', site: 'https://pestanaleiloes.com.br', estado: 'RS' },
-  { id: 'AUC-5', nome: 'VIP Leilões', site: 'https://vipleiloes.com.br', estado: 'SP' }
+  { id: 'AUC-5', nome: 'VIP Leilões', site: 'https://vipleiloes.com.br', estado: 'SP' },
+  { id: 'AUC-6', nome: 'Marca Leilões', site: 'https://www.marcaleiloes.com.br', estado: 'MS' },
+  { id: 'AUC-7', nome: 'Via Leilões', site: 'https://www.vialeiloes.com.br', estado: 'SP' }
 ];
 
 export const AUCTIONS: Auction[] = [];
