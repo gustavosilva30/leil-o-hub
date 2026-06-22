@@ -1,0 +1,14 @@
+import { extrairDadosAutoTran } from './services/autotranScraper';
+
+(async () => {
+  console.log("Running final AutoTran scraper test...");
+  try {
+    const lotes = await extrairDadosAutoTran();
+    console.log(`Success! Found ${lotes.length} lots.`);
+    if (lotes.length > 0) {
+      console.log("First lot sample:", JSON.stringify(lotes[0], null, 2));
+    }
+  } catch (err) {
+    console.error("Scraper failed:", err);
+  }
+})();
