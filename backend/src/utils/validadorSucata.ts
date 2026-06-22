@@ -20,9 +20,6 @@ const PALAVRAS_INSERVIVEL = [
   "INSERVIVEL",
   "DESTRUÍDA",
   "DESTROÇOS",
-  "SUCATA IRRECUPERÁVEL",
-  "IRRECUPERÁVEL",
-  "IRRECUPERAVEL",
 ];
 
 // Palavras que indicam sucata APROVEITÁVEL
@@ -34,6 +31,8 @@ const PALAVRAS_APROVEITAVEL = [
   "APROVEITAVEL",
   "PEÇAS",
   "DESMONTE",
+  "IRRECUPERÁVEL",
+  "IRRECUPERAVEL",
 ];
 
 export function isSucataVeicularValida(texto: string): boolean {

@@ -109,7 +109,7 @@ export async function extrairDadosCopart(): Promise<AuctionLot[]> {
           numero_lote: item.lotNumberStr || String(item.ln),
           veiculo_origem: tituloVeiculo,
           link_leilao: link,
-          tipo_sucata: docInfo.includes("IRRECUPERÁVEL") || docInfo.includes("INSERVÍVEL") ? "inservivel" : "aproveitavel",
+          tipo_sucata: mapearTipoSucata(docInfo),
           image_url: imageUrl,
           auction_start_at: parseDateBr(item.ad),
           auction_end_at: parseDateBr(item.ad),

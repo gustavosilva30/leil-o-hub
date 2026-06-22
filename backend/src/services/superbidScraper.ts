@@ -116,7 +116,7 @@ export async function extrairDadosSuperbid(): Promise<AuctionLot[]> {
           veiculo_origem: `SUCATA - ${veiculoNome}`,
           link_leilao: link,
           veiculosEncontrados: undefined, // propriedade de segurança
-          tipo_sucata: veiculoNome.toUpperCase().includes("INSERVÍVEL") || veiculoNome.toUpperCase().includes("IRRECUPERÁVEL") ? "inservivel" : "aproveitavel",
+          tipo_sucata: mapearTipoSucata(veiculoNome),
           image_url: imgUrl,
           auction_start_at: null,
           auction_end_at: dataFim,
