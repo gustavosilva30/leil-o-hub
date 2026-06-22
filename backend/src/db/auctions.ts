@@ -111,3 +111,11 @@ export async function fetchAuctionLotById(id: number): Promise<AuctionLot | null
   }
   return result.rows[0] as AuctionLot;
 }
+
+export async function deleteExpiredAuctionLots(): Promise<number> {
+  const result = await query(
+    `DELETE FROM auction_lots WHERE auction_end_at < NOW()`
+  );
+  return result.rowCount || 0;
+}
+

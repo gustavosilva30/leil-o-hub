@@ -3,6 +3,7 @@ import cors from "cors";
 import config from "@/config/index";
 import auctionsRouter from "@/routes/auctions";
 import { ensureAuctionLotsTable } from "@/db/auctions";
+import { initScheduler } from "@/scheduler/cron";
 
 const app = express();
 
@@ -48,6 +49,7 @@ app.use((req, res) => {
 async function startServer() {
   try {
     await ensureAuctionLotsTable();
+    initScheduler();
     app.listen(config.PORT, () => {
       console.log(`🚀 Backend rodando em http://localhost:${config.PORT}`);
       console.log(`📊 Ambiente: ${config.NODE_ENV}`);

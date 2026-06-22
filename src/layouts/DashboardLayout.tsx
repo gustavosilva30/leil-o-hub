@@ -12,7 +12,8 @@ import {
   Package,
   Users,
   BarChart3,
-  Menu
+  Menu,
+  RefreshCw
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -25,6 +26,7 @@ const navigation = [
   { name: 'Alertas Inteligentes', href: '/alerts', icon: BellRing },
   { name: 'Arrematações (Kanban)', href: '/purchases', icon: ShoppingCart },
   { name: 'Desmontagem', href: '/disassembly', icon: Wrench },
+  { name: 'Sincronizar Leilões', href: '/auctions/sync', icon: RefreshCw },
   { name: 'Configurações', href: '/admin', icon: Settings },
 ];
 

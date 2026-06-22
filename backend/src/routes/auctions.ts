@@ -2,7 +2,7 @@ import { Router, Request, Response } from "express";
 import { extrairDadosLeiloesMS, AuctionLot } from "@/services/leiloesScraper";
 import { extrairDadosSodre } from "@/services/sodreScraper";
 import { extrairDadosMarcaLeiloes } from "@/services/marcaLeiloesScraper";
-import { ensureAuctionLotsTable, insertAuctionLots, fetchAuctionLots, fetchAuctionLotById } from "@/db/auctions";
+import { ensureAuctionLotsTable, insertAuctionLots, fetchAuctionLots, fetchAuctionLotById, deleteExpiredAuctionLots } from "@/db/auctions";
 
 const router = Router();
 
@@ -12,6 +12,7 @@ router.post("/sync/:source", async (req: Request, res: Response) => {
 
   try {
     await ensureAuctionLotsTable();
+    await deleteExpiredAuctionLots();
 
     console.log(`🔄 Iniciando sync: ${source}`);
     
@@ -63,6 +64,7 @@ router.post("/sync/:source", async (req: Request, res: Response) => {
 router.get("/", async (req: Request, res: Response) => {
   try {
     await ensureAuctionLotsTable();
+    await deleteExpiredAuctionLots();
     const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 1000;
     const lotes = await fetchAuctionLots(limit);
     res.json({ success: true, count: lotes.length, lotes });
