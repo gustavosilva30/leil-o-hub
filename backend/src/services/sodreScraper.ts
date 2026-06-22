@@ -151,17 +151,7 @@ export const extrairDadosSodre = async (): Promise<AuctionLot[]> => {
   }
 
   if (veiculosEncontrados.length > 0) {
-    const chunkSize = 15;
-    console.log(`🚀 [Sodre] Enviando ${veiculosEncontrados.length} lotes em lotes de ${chunkSize}...`);
-    for (let i = 0; i < veiculosEncontrados.length; i += chunkSize) {
-      const chunk = veiculosEncontrados.slice(i, i + chunkSize);
-      try {
-        await axios.post(config.WEBHOOK_N8N_SODRE, { lotes: chunk });
-        console.log(`🚀 [Sodre] Grupo ${Math.floor(i / chunkSize) + 1} enviado com sucesso!`);
-      } catch (err: any) {
-        console.error(`❌ [Sodre] Erro ao enviar grupo ${Math.floor(i / chunkSize) + 1}:`, err?.message || err);
-      }
-    }
+    console.log(`🚀 [Sodre] ${veiculosEncontrados.length} lotes novos encontrados.`);
   } else {
     console.log("[Sodre] Nenhum lote novo encontrado.");
   }

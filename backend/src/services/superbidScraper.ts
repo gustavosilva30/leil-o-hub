@@ -144,16 +144,7 @@ export async function extrairDadosSuperbid(): Promise<AuctionLot[]> {
   }
 
   if (veiculosEncontrados.length > 0) {
-    try {
-      const chunkSize = 15;
-      for (let i = 0; i < veiculosEncontrados.length; i += chunkSize) {
-        const chunk = veiculosEncontrados.slice(i, i + chunkSize);
-        await axios.post(config.WEBHOOK_N8N_SUPERBID, { lotes: chunk });
-      }
-      console.log(`🚀 [Superbid] ${veiculosEncontrados.length} lotes enviados para o N8N!`);
-    } catch (err: any) {
-      console.error("[Superbid] Erro ao enviar para o N8N:", err?.message || err);
-    }
+    console.log(`🚀 [Superbid] ${veiculosEncontrados.length} lotes novos encontrados.`);
   }
 
   return veiculosEncontrados;

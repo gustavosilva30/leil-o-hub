@@ -96,13 +96,4 @@ router.get("/:id", async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/auctions/webhook/n8n (receber dados processados)
-router.post("/webhook/n8n", (req: Request, res: Response) => {
-  console.log("📩 Webhook N8N recebido:", {
-    lotes_count: req.body.lotes?.length || 0,
-    timestamp: new Date()
-  });
-  res.json({ success: true, message: "Webhook recebido" });
-});
-
 export default router;
