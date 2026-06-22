@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import { extrairDadosLeiloesMS, AuctionLot } from "@/services/leiloesScraper";
 import { extrairDadosSodre } from "@/services/sodreScraper";
 import { extrairDadosMarcaLeiloes } from "@/services/marcaLeiloesScraper";
+import { extrairDadosCopart } from "@/services/copartScraper";
 import { ensureAuctionLotsTable, insertAuctionLots, fetchAuctionLots, fetchAuctionLotById, deleteExpiredAuctionLots } from "@/db/auctions";
 
 const router = Router();
@@ -28,8 +29,10 @@ router.post("/sync/:source", async (req: Request, res: Response) => {
       case "marca-leiloes":
         lotes = await extrairDadosMarcaLeiloes();
         break;
-      case "superbid":
       case "copart":
+        lotes = await extrairDadosCopart();
+        break;
+      case "superbid":
       case "autotran":
       case "pestana":
         return res.status(501).json({ 

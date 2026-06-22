@@ -29,6 +29,9 @@ export const config = {
   WEBHOOK_N8N_MARCA_LEILOES:
     process.env.WEBHOOK_N8N_MARCA_LEILOES ||
     "https://n8n.douradosap.com.br/webhook/receber-marca-leiloes",
+  WEBHOOK_N8N_VIA_LEILOES:
+    process.env.WEBHOOK_N8N_VIA_LEILOES ||
+    "https://n8n.douradosap.com.br/webhook/receber-via-leiloes",
 };
 
 export default config;

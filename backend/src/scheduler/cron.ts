@@ -2,6 +2,7 @@ import schedule from "node-schedule";
 import { extrairDadosLeiloesMS } from "@/services/leiloesScraper";
 import { extrairDadosSodre } from "@/services/sodreScraper";
 import { extrairDadosMarcaLeiloes } from "@/services/marcaLeiloesScraper";
+import { extrairDadosCopart } from "@/services/copartScraper";
 import { ensureAuctionLotsTable, insertAuctionLots, deleteExpiredAuctionLots } from "@/db/auctions";
 
 export function initScheduler() {
@@ -39,6 +40,13 @@ export function initScheduler() {
         return [];
       });
       await insertAuctionLots(lotsMarca);
+
+      console.log("⏰ [Scheduler] Sincronizando Copart Brasil...");
+      const lotsCopart = await extrairDadosCopart().catch(err => {
+        console.error("Erro ao rodar Copart:", err.message);
+        return [];
+      });
+      await insertAuctionLots(lotsCopart);
 
       console.log("⏰ [Scheduler] Sincronização diária finalizada com sucesso!");
     } catch (error: any) {
