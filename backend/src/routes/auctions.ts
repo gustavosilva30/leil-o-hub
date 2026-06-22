@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import { extrairDadosLeiloesMS, AuctionLot } from "@/services/leiloesScraper";
+import { extrairDadosReginaAude } from "@/services/reginaAudeScraper";
 import { extrairDadosSodre } from "@/services/sodreScraper";
 import { extrairDadosMarcaLeiloes } from "@/services/marcaLeiloesScraper";
 import { extrairDadosCopart } from "@/services/copartScraper";
@@ -22,6 +23,9 @@ router.post("/sync/:source", async (req: Request, res: Response) => {
     let lotes: AuctionLot[] = [];
 
     switch (source.toLowerCase()) {
+      case "regina-aude":
+        lotes = await extrairDadosReginaAude();
+        break;
       case "leiloes-ms":
         lotes = await extrairDadosLeiloesMS();
         break;
