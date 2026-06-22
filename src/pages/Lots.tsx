@@ -17,21 +17,54 @@ export function Lots() {
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const { lotes } = useAuctions();
 
-  const transformedLots = lotes.map((l: any, i: number) => ({
-    id: l.id || `L-${i}`,
-    numeroLote: l.numero_lote,
-    marca: l.marca || l.veiculo_origem?.split(' ')[0] || 'Desconhecida',
-    modelo: l.modelo || l.veiculo_origem || 'Lote',
-    ano: l.ano || 'N/A',
-    estado: l.source || 'N/A',
-    cidade: l.fonte || 'N/A',
-    tipo: l.tipo_sucata === 'inservivel' ? 'Inservível' : 'Aproveitável',
-    leiloeiro: l.fonte || l.source,
-    imagens: l.image_url ? [l.image_url] : ['https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=800&h=600'],
-    valorEstimado: 0,
-    lanceAtual: 0,
-    dataLeilao: l.auction_start_at || l.auction_end_at || new Date().toISOString(),
-  }));
+  const parseVeiculo = (veiculoOrigem: string) => {
+    if (!veiculoOrigem) return { marca: 'Desconhecida', modelo: 'Lote' };
+    
+    // Remove "SUCATA - " ou "SUCATA " do início do texto
+    let limpo = veiculoOrigem.replace(/^SUCATA\s*-\s*/i, '').replace(/^SUCATA\s+/i, '').trim();
+    
+    // Divide por traço " - "
+    const parts = limpo.split(/\s*-\s*/);
+    if (parts.length >= 2) {
+      return {
+        marca: parts[0],
+        modelo: parts.slice(1).join(' - ')
+      };
+    }
+    
+    // Fallback: divide por espaço se não achar " - "
+    const words = limpo.split(/\s+/);
+    if (words.length >= 2) {
+      return {
+        marca: words[0],
+        modelo: words.slice(1).join(' ')
+      };
+    }
+    
+    return {
+      marca: limpo || 'Desconhecida',
+      modelo: 'Lote'
+    };
+  };
+
+  const transformedLots = lotes.map((l: any, i: number) => {
+    const parsed = parseVeiculo(l.veiculo_origem);
+    return {
+      id: l.id || `L-${i}`,
+      numeroLote: l.numero_lote,
+      marca: l.marca || parsed.marca,
+      modelo: l.modelo || parsed.modelo,
+      ano: l.ano || 'N/A',
+      estado: l.source || 'N/A',
+      cidade: l.fonte || 'N/A',
+      tipo: l.tipo_sucata === 'inservivel' ? 'Inservível' : 'Aproveitável',
+      leiloeiro: l.fonte || l.source,
+      imagens: l.image_url ? [l.image_url] : ['https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=800&h=600'],
+      valorEstimado: 0,
+      lanceAtual: 0,
+      dataLeilao: l.auction_start_at || l.auction_end_at || new Date().toISOString(),
+    };
+  });
 
   const displayedLots = transformedLots.slice(0, 24);
 
@@ -183,7 +216,7 @@ export function Lots() {
                   <div className="flex justify-between items-start">
                     <div>
                       <Link to={`/lots/${lot.id}`} className="hover:underline">
-                        <h3 className="font-semibold text-lg line-clamp-1 text-slate-800 dark:text-slate-100">{lot.marca} {lot.modelo}</h3>
+                        <h3 className="font-semibold text-lg line-clamp-2 text-slate-800 dark:text-slate-100">{lot.marca} {lot.modelo}</h3>
                       </Link>
                       <p className="text-sm text-slate-500">{lot.ano}</p>
                     </div>

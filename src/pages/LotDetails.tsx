@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { AUCTION_HISTORY, LOT_TAGS, TAGS, PRIVATE_NOTES, CURRENT_USER } from '@/src/data/mock';
@@ -13,6 +14,7 @@ const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3001/api/auct
 
 export function LotDetails() {
   const { id } = useParams();
+  const [selectedImg, setSelectedImg] = useState(0);
 
   const { data, isLoading } = useQuery({
     queryKey: ["auction", id],
@@ -44,17 +46,38 @@ export function LotDetails() {
     );
   }
 
+  const parseVeiculo = (veiculoOrigem: string) => {
+    if (!veiculoOrigem) return { marca: 'Desconhecida', modelo: 'Lote' };
+    let limpo = veiculoOrigem.replace(/^SUCATA\s*-\s*/i, '').replace(/^SUCATA\s+/i, '').trim();
+    const parts = limpo.split(/\s*-\s*/);
+    if (parts.length >= 2) {
+      return { marca: parts[0], modelo: parts.slice(1).join(' - ') };
+    }
+    const words = limpo.split(/\s+/);
+    if (words.length >= 2) {
+      return { marca: words[0], modelo: words.slice(1).join(' ') };
+    }
+    return { marca: limpo || 'Desconhecida', modelo: 'Lote' };
+  };
+
+  const parsed = parseVeiculo(data.veiculo_origem);
+
+  let lotImagens = data.image_url ? [data.image_url] : ['https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=800&h=600'];
+  if (data.raw && Array.isArray(data.raw.lot_pictures) && data.raw.lot_pictures.length > 0) {
+    lotImagens = data.raw.lot_pictures;
+  }
+
   const lot = {
     id: data.id,
     numeroLote: data.numero_lote,
-    marca: data.marca || data.veiculo_origem?.split(' ')[0] || 'Desconhecida',
-    modelo: data.modelo || data.veiculo_origem || 'Lote',
+    marca: data.marca || parsed.marca,
+    modelo: data.modelo || parsed.modelo,
     ano: data.ano || 'N/A',
     estado: data.source || 'N/A',
     cidade: data.fonte || 'N/A',
     tipo: data.tipo_sucata === 'inservivel' ? 'Inservível' : 'Aproveitável',
     leiloeiro: data.fonte || data.source,
-    imagens: data.image_url ? [data.image_url] : ['https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=800&h=600'],
+    imagens: lotImagens,
     valorEstimado: 0,
     lanceAtual: 0,
     dataLeilao: data.auction_start_at || data.auction_end_at || new Date().toISOString(),
@@ -115,15 +138,19 @@ export function LotDetails() {
         <div className="lg:col-span-2 space-y-6">
           <div className="aspect-video bg-slate-100 dark:bg-slate-800 rounded-2xl overflow-hidden relative border border-slate-200 dark:border-slate-800">
             <img 
-              src={lot.imagens[0]} 
+              src={lot.imagens[selectedImg] || lot.imagens[0]} 
               alt="Veículo principal" 
               className="w-full h-full object-cover"
             />
           </div>
-          <div className="grid grid-cols-4 gap-3">
-            {[1, 2, 3, 4].map((i) => (
-               <div key={i} className="aspect-video bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden opacity-70 hover:opacity-100 cursor-pointer transition-all hover:scale-[1.02] border-2 border-transparent hover:border-blue-500">
-                 <img src={lot.imagens[1] || lot.imagens[0]} alt={`Thumb ${i}`} className="w-full h-full object-cover" />
+          <div className="grid grid-cols-5 md:grid-cols-8 gap-3">
+            {lot.imagens.map((img, i) => (
+               <div 
+                 key={i} 
+                 onClick={() => setSelectedImg(i)}
+                 className={`aspect-video bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden cursor-pointer transition-all hover:scale-[1.02] border-2 ${selectedImg === i ? 'border-blue-500 opacity-100' : 'border-transparent opacity-60 hover:opacity-100'}`}
+               >
+                 <img src={img} alt={`Thumb ${i}`} className="w-full h-full object-cover" />
                </div>
             ))}
           </div>
