@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import { extrairDadosLeiloesMS, AuctionLot } from "@/services/leiloesScraper";
 import { extrairDadosReginaAude } from "@/services/reginaAudeScraper";
 import { extrairDadosAutoTran } from "@/services/autotranScraper";
+import { extrairDadosLeilo } from "@/services/leiloScraper";
 import { extrairDadosSodre } from "@/services/sodreScraper";
 import { extrairDadosMarcaLeiloes } from "@/services/marcaLeiloesScraper";
 import { extrairDadosCopart } from "@/services/copartScraper";
@@ -32,6 +33,9 @@ router.post("/sync/:source", async (req: Request, res: Response) => {
         break;
       case "autotran":
         lotes = await extrairDadosAutoTran();
+        break;
+      case "leilo":
+        lotes = await extrairDadosLeilo();
         break;
       case "sodre":
         lotes = await extrairDadosSodre();

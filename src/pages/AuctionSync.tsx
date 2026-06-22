@@ -15,6 +15,7 @@ const SOURCES = [
   { id: "milan", label: "Milan Leilões", color: "bg-yellow-600" },
   { id: "via-leiloes", label: "Via Leilões", color: "bg-teal-500" },
   { id: "autotran", label: "AutoTran", color: "bg-red-500" },
+  { id: "leilo", label: "Leiló", color: "bg-amber-500" },
   { id: "pestana", label: "Pestana", color: "bg-pink-500", disabled: true },
 ];
 
