@@ -10,11 +10,13 @@ const SOURCES = [
   { id: "sodre", label: "Sodré", color: "bg-purple-500" },
   { id: "superbid", label: "Superbid", color: "bg-green-500" },
   { id: "copart", label: "Copart", color: "bg-orange-500" },
+  { id: "marca-leiloes", label: "Marca Leilões", color: "bg-indigo-500" },
+  { id: "milan", label: "Milan Leilões", color: "bg-yellow-600" },
+  { id: "via-leiloes", label: "Via Leilões", color: "bg-teal-500" },
   { id: "autotran", label: "AutoTran", color: "bg-red-500", disabled: true },
   { id: "pestana", label: "Pestana", color: "bg-pink-500", disabled: true },
-  { id: "marca-leiloes", label: "Marca Leilões", color: "bg-indigo-500" },
-  { id: "via-leiloes", label: "Via Leilões", color: "bg-teal-500" },
 ];
+
 
 export default function AuctionSync() {
   const { lotes, sync, isPending, lastSync } = useAuctions();

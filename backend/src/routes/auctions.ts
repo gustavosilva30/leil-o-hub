@@ -4,6 +4,7 @@ import { extrairDadosSodre } from "@/services/sodreScraper";
 import { extrairDadosMarcaLeiloes } from "@/services/marcaLeiloesScraper";
 import { extrairDadosCopart } from "@/services/copartScraper";
 import { extrairDadosSuperbid } from "@/services/superbidScraper";
+import { extrairDadosMilanLeiloes } from "@/services/milanLeiloesScraper";
 import { ensureAuctionLotsTable, insertAuctionLots, fetchAuctionLots, fetchAuctionLotById, deleteExpiredAuctionLots } from "@/db/auctions";
 
 const router = Router();
@@ -35,6 +36,10 @@ router.post("/sync/:source", async (req: Request, res: Response) => {
         break;
       case "superbid":
         lotes = await extrairDadosSuperbid();
+        break;
+      case "milan":
+      case "milan-leiloes":
+        lotes = await extrairDadosMilanLeiloes();
         break;
       case "autotran":
       case "pestana":
