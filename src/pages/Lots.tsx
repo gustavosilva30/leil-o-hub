@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { BRANDS, STATES, AUCTIONEERS } from '@/src/data/mock';
 import { useAuctions } from '@/src/hooks/useAuctions';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
@@ -16,6 +16,31 @@ import { Link } from 'react-router-dom';
 export function Lots() {
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const { lotes } = useAuctions();
+
+  // Filter States
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
+  const [selectedAuctioneers, setSelectedAuctioneers] = useState<string[]>([]);
+  const [selectedStates, setSelectedStates] = useState<string[]>([]);
+
+  const toggleFilter = (
+    list: string[],
+    setList: React.Dispatch<React.SetStateAction<string[]>>,
+    value: string
+  ) => {
+    if (list.includes(value)) {
+      setList(list.filter(item => item !== value));
+    } else {
+      setList([...list, value]);
+    }
+  };
+
+  const clearFilters = () => {
+    setSelectedTypes([]);
+    setSelectedBrands([]);
+    setSelectedAuctioneers([]);
+    setSelectedStates([]);
+  };
 
   const parseVeiculo = (veiculoOrigem: string) => {
     if (!veiculoOrigem) return { marca: 'Desconhecida', modelo: 'Lote' };
@@ -55,8 +80,8 @@ export function Lots() {
       marca: l.marca || parsed.marca,
       modelo: l.modelo || parsed.modelo,
       ano: l.ano || 'N/A',
-      estado: l.source || 'N/A',
-      cidade: l.fonte || 'N/A',
+      estado: l.source === 'leiloes-ms' ? 'MS' : (l.raw?.yard_state_acronym || l.raw?.state || 'SP'),
+      cidade: l.source === 'leiloes-ms' ? 'Campo Grande' : (l.raw?.yard_city || l.raw?.city || 'São Paulo'),
       tipo: l.tipo_sucata === 'inservivel' ? 'Inservível' : 'Aproveitável',
       leiloeiro: l.fonte || l.source,
       imagens: l.image_url ? [l.image_url] : ['https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=800&h=600'],
@@ -66,7 +91,27 @@ export function Lots() {
     };
   });
 
-  const displayedLots = transformedLots.slice(0, 24);
+  const filteredLots = transformedLots.filter((lot: any) => {
+    if (selectedTypes.length > 0 && !selectedTypes.includes(lot.tipo)) {
+      return false;
+    }
+    if (selectedBrands.length > 0 && !selectedBrands.includes(lot.marca)) {
+      return false;
+    }
+    if (selectedAuctioneers.length > 0) {
+      const match = selectedAuctioneers.some(a => 
+        lot.leiloeiro.toLowerCase().includes(a.toLowerCase()) || 
+        a.toLowerCase().includes(lot.leiloeiro.toLowerCase())
+      );
+      if (!match) return false;
+    }
+    if (selectedStates.length > 0 && !selectedStates.includes(lot.estado)) {
+      return false;
+    }
+    return true;
+  });
+
+  const displayedLots = filteredLots.slice(0, 24);
 
   return (
     <div className="flex flex-col md:flex-row gap-6 h-full">
@@ -75,7 +120,7 @@ export function Lots() {
         <div className="flex flex-col gap-2 mb-4">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold text-lg tracking-tight">Filtros</h3>
-            <Button variant="link" size="sm" className="h-auto p-0 text-muted-foreground">Limpar</Button>
+            <Button variant="link" size="sm" className="h-auto p-0 text-muted-foreground" onClick={clearFilters}>Limpar</Button>
           </div>
           <Select defaultValue="">
             <SelectTrigger className="w-full bg-slate-50 dark:bg-slate-900 border-dashed border-slate-300 dark:border-slate-800 h-8 text-xs">
@@ -94,11 +139,27 @@ export function Lots() {
               <AccordionTrigger className="text-sm font-semibold">Tipo do Lote</AccordionTrigger>
               <AccordionContent className="space-y-2">
                 <div className="flex items-center space-x-2">
-                  <Checkbox id="tipo-sucata" />
-                  <Label htmlFor="tipo-sucata" className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Sucata para Desmonte</Label>
+                  <Checkbox 
+                    id="tipo-aproveitavel" 
+                    checked={selectedTypes.includes('Aproveitável')}
+                    onCheckedChange={() => toggleFilter(selectedTypes, setSelectedTypes, 'Aproveitável')}
+                  />
+                  <Label htmlFor="tipo-aproveitavel" className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Sucata Aproveitável</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox id="tipo-doc" />
+                  <Checkbox 
+                    id="tipo-inservivel" 
+                    checked={selectedTypes.includes('Inservível')}
+                    onCheckedChange={() => toggleFilter(selectedTypes, setSelectedTypes, 'Inservível')}
+                  />
+                  <Label htmlFor="tipo-inservivel" className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Sucata Inservível</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="tipo-doc" 
+                    checked={selectedTypes.includes('Direito à Documentação')}
+                    onCheckedChange={() => toggleFilter(selectedTypes, setSelectedTypes, 'Direito à Documentação')}
+                  />
                   <Label htmlFor="tipo-doc" className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Direito à Documentação</Label>
                 </div>
               </AccordionContent>
@@ -107,12 +168,20 @@ export function Lots() {
             <AccordionItem value="marca">
               <AccordionTrigger className="text-sm font-semibold">Marca</AccordionTrigger>
               <AccordionContent className="space-y-2">
-                {BRANDS.map(b => (
-                  <div key={b.brand} className="flex items-center space-x-2">
-                    <Checkbox id={`marca-${b.brand}`} />
-                    <Label htmlFor={`marca-${b.brand}`} className="text-sm font-normal">{b.brand}</Label>
+                <ScrollArea className="h-48 pr-2">
+                  <div className="space-y-2">
+                    {BRANDS.map(b => (
+                      <div key={b.brand} className="flex items-center space-x-2">
+                        <Checkbox 
+                          id={`marca-${b.brand}`} 
+                          checked={selectedBrands.includes(b.brand)}
+                          onCheckedChange={() => toggleFilter(selectedBrands, setSelectedBrands, b.brand)}
+                        />
+                        <Label htmlFor={`marca-${b.brand}`} className="text-sm font-normal">{b.brand}</Label>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </ScrollArea>
               </AccordionContent>
             </AccordionItem>
 
@@ -121,7 +190,11 @@ export function Lots() {
               <AccordionContent className="space-y-2">
                 {AUCTIONEERS.map(a => (
                   <div key={a.id} className="flex items-center space-x-2">
-                    <Checkbox id={`auc-${a.id}`} />
+                    <Checkbox 
+                      id={`auc-${a.id}`} 
+                      checked={selectedAuctioneers.includes(a.nome)}
+                      onCheckedChange={() => toggleFilter(selectedAuctioneers, setSelectedAuctioneers, a.nome)}
+                    />
                     <Label htmlFor={`auc-${a.id}`} className="text-sm font-normal">{a.nome}</Label>
                   </div>
                 ))}
@@ -131,14 +204,20 @@ export function Lots() {
             <AccordionItem value="estado">
               <AccordionTrigger className="text-sm font-semibold">Estado</AccordionTrigger>
               <AccordionContent className="space-y-2">
-                <div className="grid grid-cols-2 gap-2">
-                  {STATES.map(s => (
-                     <div key={s} className="flex items-center space-x-2">
-                      <Checkbox id={`uf-${s}`} />
-                      <Label htmlFor={`uf-${s}`} className="text-sm font-normal">{s}</Label>
-                    </div>
-                  ))}
-                </div>
+                <ScrollArea className="h-48 pr-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    {STATES.map(s => (
+                       <div key={s} className="flex items-center space-x-2">
+                        <Checkbox 
+                          id={`uf-${s}`} 
+                          checked={selectedStates.includes(s)}
+                          onCheckedChange={() => toggleFilter(selectedStates, setSelectedStates, s)}
+                        />
+                        <Label htmlFor={`uf-${s}`} className="text-sm font-normal">{s}</Label>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
               </AccordionContent>
             </AccordionItem>
 

@@ -19,6 +19,7 @@ import { Disassembly } from '@/src/pages/Disassembly';
 import { Reports } from '@/src/pages/Reports';
 import AuctionSync from '@/src/pages/AuctionSync';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { Toaster } from 'sonner';
 
 export default function App() {
   return (
@@ -45,6 +46,7 @@ export default function App() {
           </Route>
         </Routes>
       </BrowserRouter>
+      <Toaster position="top-right" richColors />
     </TooltipProvider>
   );
 }

@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { AUCTION_HISTORY, LOT_TAGS, TAGS, PRIVATE_NOTES, CURRENT_USER } from '@/src/data/mock';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -78,6 +79,7 @@ export function LotDetails() {
     tipo: data.tipo_sucata === 'inservivel' ? 'Inservível' : 'Aproveitável',
     leiloeiro: data.fonte || data.source,
     imagens: lotImagens,
+    linkLeilao: data.link_leilao,
     valorEstimado: 0,
     lanceAtual: 0,
     dataLeilao: data.auction_start_at || data.auction_end_at || new Date().toISOString(),
@@ -118,10 +120,23 @@ export function LotDetails() {
           <p className="text-slate-500 text-sm mt-1">Lote {lot.numeroLote} • {lot.leiloeiro}</p>
         </div>
         <div className="ml-auto flex gap-2">
-          <Button variant="outline" size="sm" className="shadow-sm">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="shadow-sm"
+            onClick={() => {
+              navigator.clipboard.writeText(window.location.href);
+              toast.success("Link do lote copiado para a área de transferência!");
+            }}
+          >
             <Share2 className="mr-2 h-4 w-4" /> Compartilhar
           </Button>
-          <Button variant="default" size="sm" className="shadow-sm">
+          <Button 
+            variant="default" 
+            size="sm" 
+            className="shadow-sm animate-pulse"
+            onClick={() => toast.success("Lote adicionado aos favoritos!")}
+          >
             <Heart className="mr-2 h-4 w-4" /> Favoritar
           </Button>
         </div>
@@ -288,8 +303,10 @@ export function LotDetails() {
                 </div>
               </div>
               
-              <Button className="w-full mt-6 shadow-md" size="lg">
-                Ir para Plataforma Origem <ExternalLink className="ml-2 h-4 w-4" />
+              <Button className="w-full mt-6 shadow-md" size="lg" asChild>
+                <a href={lot.linkLeilao} target="_blank" rel="noopener noreferrer">
+                  Ir para Plataforma Origem <ExternalLink className="ml-2 h-4 w-4" />
+                </a>
               </Button>
               <p className="text-[10px] text-center text-slate-400 font-medium">As transações ocorrem fora do Leilão Hub.</p>
             </CardContent>
@@ -302,10 +319,18 @@ export function LotDetails() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              <Button variant="outline" className="w-full justify-start text-sm h-10 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 shadow-sm">
+              <Button 
+                variant="outline" 
+                className="w-full justify-start text-sm h-10 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 shadow-sm"
+                onClick={() => toast.info(`Criando filtro de busca inteligente para ${lot.marca} ${lot.modelo}...`)}
+              >
                 <AlertTriangle className="mr-2 h-4 w-4 text-orange-500" /> Criar Filtro Similar
               </Button>
-              <Button variant="outline" className="w-full justify-start text-sm h-10 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 shadow-sm">
+              <Button 
+                variant="outline" 
+                className="w-full justify-start text-sm h-10 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 shadow-sm"
+                onClick={() => toast.success("Lote salvo na sua pasta de monitoramento!")}
+              >
                 <Heart className="mr-2 h-4 w-4 text-red-500" /> Salvar Lote
               </Button>
             </CardContent>

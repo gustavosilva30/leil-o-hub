@@ -1,16 +1,31 @@
 import { Auction, Auctioneer, Lot, Tenant, User, Alert, Favorite, AuctionHistory, Purchase, VehiclePart, InventoryPart, Customer, CustomerInterest, Tag, LotTag, Note, SavedFilter } from '../types';
 
 export const BRANDS = [
-  { brand: 'Volkswagen', models: ['Gol', 'Polo', 'Saveiro', 'Virtus', 'Nivus'] },
-  { brand: 'Fiat', models: ['Strada', 'Argo', 'Mobi', 'Toro', 'Pulse'] },
-  { brand: 'Chevrolet', models: ['Onix', 'Tracker', 'Montana', 'Spin'] },
-  { brand: 'Hyundai', models: ['HB20', 'Creta', 'Tucson'] },
-  { brand: 'Toyota', models: ['Corolla', 'Hilux', 'Yaris'] },
-  { brand: 'Honda', models: ['Civic', 'HR-V', 'Fit', 'City'] },
-  { brand: 'Ford', models: ['Ka', 'EcoSport', 'Ranger'] },
+  { brand: 'Chevrolet', models: ['Onix', 'Prisma', 'Celta', 'Corsa', 'Cruze', 'Tracker', 'S10', 'Montana', 'Spin', 'Kadett', 'Monza'] },
+  { brand: 'Fiat', models: ['Strada', 'Uno', 'Palio', 'Argo', 'Mobi', 'Toro', 'Fiorino', 'Siena', 'Cronos', 'Pulse', 'Idea', 'Punto'] },
+  { brand: 'Volkswagen', models: ['Gol', 'Fox', 'Saveiro', 'Polo', 'Voyage', 'Golf', 'T-Cross', 'Nivus', 'Virtus', 'Amarok', 'Jetta', 'Bora'] },
+  { brand: 'Ford', models: ['Ka', 'Fiesta', 'EcoSport', 'Ranger', 'Focus', 'Fusion', 'Focus Sedan'] },
+  { brand: 'Hyundai', models: ['HB20', 'Creta', 'Tucson', 'HB20S', 'i30', 'Elantra', 'Santa Fe'] },
+  { brand: 'Toyota', models: ['Corolla', 'Hilux', 'Etios', 'Yaris', 'SW4', 'RAV4'] },
+  { brand: 'Honda', models: ['Civic', 'Fit', 'HR-V', 'City', 'CR-V'] },
+  { brand: 'Renault', models: ['Sandero', 'Logan', 'Duster', 'Kwid', 'Captur', 'Oroch', 'Clio'] },
+  { brand: 'Jeep', models: ['Compass', 'Renegade', 'Commander', 'Grand Cherokee'] },
+  { brand: 'Nissan', models: ['Versa', 'March', 'Kicks', 'Frontier', 'Sentra'] },
+  { brand: 'Peugeot', models: ['208', '2008', '308', '207', '3008'] },
+  { brand: 'Citroën', models: ['C3', 'C4 Cactus', 'C3 Aircross', 'C4 Picasso'] },
+  { brand: 'Mitsubishi', models: ['L200 Triton', 'ASX', 'Outlander', 'Pajero'] },
+  { brand: 'Caoa Chery', models: ['Tiggo 5X', 'Tiggo 7', 'Tiggo 8', 'Arrizo 6'] },
+  { brand: 'Kia', models: ['Sportage', 'Cerato', 'Picanto', 'Sorento'] },
+  { brand: 'BMW', models: ['320i', 'X1', '328i', 'X3', 'X5'] },
+  { brand: 'Mercedes-Benz', models: ['Classe C', 'GLA', 'Classe A', 'C180', 'C200'] },
+  { brand: 'Audi', models: ['A3', 'A4', 'Q3', 'A5', 'Q5'] },
 ];
 
-export const STATES = ['SP', 'RJ', 'MG', 'PR', 'RS', 'SC', 'GO', 'BA'];
+export const STATES = [
+  'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 
+  'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 
+  'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
+];
 export const CITIES = ['São Paulo', 'Campinas', 'Rio de Janeiro', 'Belo Horizonte', 'Curitiba', 'Porto Alegre', 'Goiânia', 'Salvador'];
 
 export const AUCTIONEERS: Auctioneer[] = [
