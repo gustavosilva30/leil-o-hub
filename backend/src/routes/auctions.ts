@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { extrairDadosLeiloesMS, AuctionLot } from "@/services/leiloesScraper";
 import { extrairDadosSodre } from "@/services/sodreScraper";
+import { extrairDadosMarcaLeiloes } from "@/services/marcaLeiloesScraper";
 import { ensureAuctionLotsTable, insertAuctionLots, fetchAuctionLots, fetchAuctionLotById } from "@/db/auctions";
 
 const router = Router();
@@ -23,11 +24,13 @@ router.post("/sync/:source", async (req: Request, res: Response) => {
       case "sodre":
         lotes = await extrairDadosSodre();
         break;
+      case "marca-leiloes":
+        lotes = await extrairDadosMarcaLeiloes();
+        break;
       case "superbid":
       case "copart":
       case "autotran":
       case "pestana":
-      case "marca-leiloes":
         return res.status(501).json({ 
           error: "Scraper ainda não implementado",
           source,

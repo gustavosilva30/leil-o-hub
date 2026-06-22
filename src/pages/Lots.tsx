@@ -22,12 +22,14 @@ export function Lots() {
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [selectedAuctioneers, setSelectedAuctioneers] = useState<string[]>([]);
   const [selectedStates, setSelectedStates] = useState<string[]>([]);
+  const [pageSize, setPageSize] = useState(24);
 
   const toggleFilter = (
     list: string[],
     setList: React.Dispatch<React.SetStateAction<string[]>>,
     value: string
   ) => {
+    setPageSize(24); // Reset pagination on filter toggle
     if (list.includes(value)) {
       setList(list.filter(item => item !== value));
     } else {
@@ -40,6 +42,7 @@ export function Lots() {
     setSelectedBrands([]);
     setSelectedAuctioneers([]);
     setSelectedStates([]);
+    setPageSize(24);
   };
 
   const parseVeiculo = (veiculoOrigem: string) => {
@@ -95,8 +98,9 @@ export function Lots() {
     if (selectedTypes.length > 0 && !selectedTypes.includes(lot.tipo)) {
       return false;
     }
-    if (selectedBrands.length > 0 && !selectedBrands.includes(lot.marca)) {
-      return false;
+    if (selectedBrands.length > 0) {
+      const match = selectedBrands.some(b => b.toLowerCase() === lot.marca.toLowerCase());
+      if (!match) return false;
     }
     if (selectedAuctioneers.length > 0) {
       const match = selectedAuctioneers.some(a => 
@@ -111,7 +115,7 @@ export function Lots() {
     return true;
   });
 
-  const displayedLots = filteredLots.slice(0, 24);
+  const displayedLots = filteredLots.slice(0, pageSize);
 
   return (
     <div className="flex flex-col md:flex-row gap-6 h-full">
@@ -329,9 +333,13 @@ export function Lots() {
               </Card>
             ))}
           </div>
-          <div className="py-8 flex justify-center">
-            <Button variant="outline">Carregar mais lotes</Button>
-          </div>
+          {filteredLots.length > pageSize && (
+            <div className="py-8 flex justify-center">
+              <Button variant="outline" onClick={() => setPageSize(prev => prev + 24)}>
+                Carregar mais lotes
+              </Button>
+            </div>
+          )}
         </ScrollArea>
       </div>
     </div>
