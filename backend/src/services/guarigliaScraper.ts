@@ -52,13 +52,34 @@ export async function extrairDadosGuariglia(): Promise<AuctionLot[]> {
     });
 
     const page = await context.newPage();
+
+    // Bloquear scripts de terceiros/analytics para evitar timeouts
+    await page.route("**/*", (route) => {
+      const url = route.request().url();
+      if (
+        url.includes("analytics") ||
+        url.includes("google-optimize") ||
+        url.includes("facebook") ||
+        url.includes("sentry") ||
+        url.includes("googletagmanager") ||
+        url.includes("facebook.net")
+      ) {
+        route.abort();
+      } else {
+        route.continue();
+      }
+    });
+
     const searchUrl = `${BASE_URL}/lotes/search?search=sucata`;
     console.log(`[Guariglia] Acessando busca: ${searchUrl}`);
     
     await page.goto(searchUrl, {
-      waitUntil: "networkidle",
-      timeout: 45000,
+      waitUntil: "domcontentloaded",
+      timeout: 30000,
     });
+
+    // Esperar um curto período para carregamento do HTML dinâmico, se aplicável
+    await page.waitForSelector(".lote.rounded", { timeout: 10000 }).catch(() => {});
 
     const content = await page.content();
     const $ = cheerio.load(content);
@@ -80,7 +101,9 @@ export async function extrairDadosGuariglia(): Promise<AuctionLot[]> {
 
       try {
         console.log(`[Guariglia] Coletando lote: ${link}`);
-        await page.goto(link, { waitUntil: "networkidle", timeout: 25000 });
+        await page.goto(link, { waitUntil: "domcontentloaded", timeout: 15000 });
+        // Pequena pausa para garantir renderização local das imagens
+        await page.waitForTimeout(500).catch(() => {});
         const lotContent = await page.content();
         const $lot = cheerio.load(lotContent);
 
