@@ -17,7 +17,8 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { CURRENT_TENANT, CURRENT_USER } from '@/src/data/mock';
+import { CURRENT_TENANT } from '@/src/data/mock';
+import { useAuth } from '@/src/context/AuthContext';
 
 const navigation = [
   { name: 'Dashboard Corporativo', href: '/', icon: LayoutDashboard },
@@ -32,6 +33,7 @@ const navigation = [
 
 export function DashboardLayout() {
   const location = useLocation();
+  const { user, logout } = useAuth();
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 text-slate-900 dark:bg-slate-950 font-sans">
@@ -69,13 +71,21 @@ export function DashboardLayout() {
           <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700">
             <Avatar className="w-8 h-8">
               <AvatarImage src="" />
-              <AvatarFallback className="bg-slate-300 dark:bg-slate-700">{CURRENT_USER.nome.substring(0,2)}</AvatarFallback>
+              <AvatarFallback className="bg-slate-300 dark:bg-slate-700">
+                {user?.nome ? user.nome.substring(0, 2).toUpperCase() : 'US'}
+              </AvatarFallback>
             </Avatar>
             <div className="flex flex-col overflow-hidden flex-1">
-              <span className="text-xs font-bold truncate">{CURRENT_USER.nome}</span>
-              <span className="text-[10px] text-slate-500 truncate dark:text-slate-400">{CURRENT_TENANT.nome}</span>
+              <span className="text-xs font-bold truncate">{user?.nome || 'Usuário'}</span>
+              <span className="text-[10px] text-slate-500 truncate dark:text-slate-400">{user?.email || CURRENT_TENANT.nome}</span>
             </div>
-            <Button variant="ghost" size="icon" className="h-8 w-8 ml-auto text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700" title="Sair">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-8 w-8 ml-auto text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700" 
+              title="Sair"
+              onClick={logout}
+            >
               <LogOut className="h-4 w-4" />
             </Button>
           </div>

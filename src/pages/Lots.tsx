@@ -100,7 +100,7 @@ export function Lots() {
       cidade: l.source === 'leiloes-ms' ? 'Campo Grande' : (l.raw?.yard_city || l.raw?.city || 'São Paulo'),
       tipo: l.tipo_sucata === 'inservivel' ? 'Inservível' : 'Aproveitável',
       leiloeiro: l.fonte || l.source,
-      imagens: l.image_url ? [l.image_url] : [],
+      imagens: l.raw?.lot_pictures && l.raw.lot_pictures.length > 0 ? l.raw.lot_pictures : (l.image_url ? [l.image_url] : []),
       valorEstimado: 0,
       lanceAtual: lanceAtual,
       dataLeilao: l.auction_start_at || l.auction_end_at || new Date().toISOString(),

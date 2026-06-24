@@ -9,13 +9,14 @@ const HEADERS     = { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) A
 
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
-// Função para converter "25/03/2026 14:00" em ISO 8601
+// Função para converter "25/03/2026 14:00:00" ou "25/03/2026 14:00" ou "25/03/2026" em ISO 8601
 function parseDataBr(texto: string): string | null {
     try {
-        const match = texto.match(/(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}:\d{2})/);
+        const match = texto.match(/(\d{2})\/(\d{2})\/(\d{4})(?:\s+(\d{2}:\d{2})(?::\d{2})?)?/);
         if (!match) return null;
         const [_, dia, mes, ano, hora] = match;
-        return `${ano}-${mes}-${dia}T${hora}:00`;
+        const horaMin = hora || "00:00";
+        return `${ano}-${mes}-${dia}T${horaMin}:00`;
     } catch (e) {
         return null;
     }
@@ -124,8 +125,8 @@ export const extrairDadosReginaAude = async (): Promise<AuctionLot[]> => {
 
                 const sectionDatas = $lote(".infos-leilao, .datas-leilao, body").text().toUpperCase();
                 
-                const regexAbertura = /ABERTURA[:\s]+(\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2})/;
-                const regexFim = /ENCERRAMENTO[:\s]+(\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2})/;
+                const regexAbertura = /ABERTURA[:\s]+(\d{2}\/\d{2}\/\d{4}(?:\s+\d{2}:\d{2}(?::\d{2})?)?)/;
+                const regexFim = /ENCERRAMENTO[:\s]+(\d{2}\/\d{2}\/\d{4}(?:\s+\d{2}:\d{2}(?::\d{2})?)?)/;
 
                 const matchAbertura = sectionDatas.match(regexAbertura);
                 const matchFim = sectionDatas.match(regexFim);

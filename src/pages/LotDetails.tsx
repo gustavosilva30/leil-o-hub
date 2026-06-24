@@ -313,7 +313,9 @@ export function LotDetails() {
                 <Calendar className="h-5 w-5 text-blue-600" />
                 <div>
                   <p className="font-bold text-slate-800 dark:text-slate-100">Encerramento</p>
-                  <p className="text-slate-500">{new Date(lot.dataLeilao).toLocaleDateString('pt-BR')} às 10:00</p>
+                  <p className="text-slate-500">
+                    {new Date(lot.dataLeilao).toLocaleDateString('pt-BR')} às {new Date(lot.dataLeilao).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                  </p>
                 </div>
               </div>
               <div className="flex items-center gap-3 text-sm">

@@ -10,6 +10,7 @@ import { extrairDadosSuperbid } from "@/services/superbidScraper";
 import { extrairDadosMilanLeiloes } from "@/services/milanLeiloesScraper";
 import { extrairDadosGuariglia } from "@/services/guarigliaScraper";
 import { extrairDadosCasaDeLeiloes } from "@/services/casaDeLeiloesScraper";
+import { extrairDadosRicoLeiloes } from "@/services/ricoLeiloesScraper";
 import { ensureAuctionLotsTable, insertAuctionLots, fetchAuctionLots, fetchAuctionLotById, deleteExpiredAuctionLots } from "@/db/auctions";
 
 const router = Router();
@@ -27,6 +28,9 @@ router.post("/sync/:source", async (req: Request, res: Response) => {
     let lotes: AuctionLot[] = [];
 
     switch (source.toLowerCase()) {
+      case "rico-leiloes":
+        lotes = await extrairDadosRicoLeiloes();
+        break;
       case "casa-de-leiloes":
         lotes = await extrairDadosCasaDeLeiloes();
         break;
