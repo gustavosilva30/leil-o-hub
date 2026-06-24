@@ -17,6 +17,8 @@ const SOURCES = [
   { id: "autotran", label: "AutoTran", color: "bg-red-500" },
   { id: "leilo", label: "Leiló", color: "bg-amber-500" },
   { id: "guariglia", label: "Guariglia", color: "bg-cyan-600" },
+  { id: "casa-de-leiloes", label: "Casa de Leilões", color: "bg-emerald-600" },
+  { id: "rico-leiloes", label: "Rico Leilões", color: "bg-violet-600" },
   { id: "pestana", label: "Pestana", color: "bg-pink-500", disabled: true },
 ];
 

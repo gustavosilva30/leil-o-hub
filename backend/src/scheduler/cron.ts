@@ -7,6 +7,7 @@ import { extrairDadosSuperbid } from "@/services/superbidScraper";
 import { extrairDadosMilanLeiloes } from "@/services/milanLeiloesScraper";
 import { extrairDadosCasaDeLeiloes } from "@/services/casaDeLeiloesScraper";
 import { extrairDadosRicoLeiloes } from "@/services/ricoLeiloesScraper";
+import { extrairDadosSumareLeiloes } from "@/services/sumareleiloesScraper";
 import { ensureAuctionLotsTable, insertAuctionLots, deleteExpiredAuctionLots } from "@/db/auctions";
 
 /** Aguarda N milissegundos antes de continuar */
@@ -59,6 +60,7 @@ export function initScheduler() {
 
       // ── Scrapers executados sequencialmente com 5 min de intervalo ──────
       const scrapers: Array<{ nome: string; fn: () => Promise<any[]> }> = [
+        { nome: "Sumaré Leilões", fn: extrairDadosSumareLeiloes },
         { nome: "Rico Leilões",   fn: extrairDadosRicoLeiloes },
         { nome: "Casa de Leilões", fn: extrairDadosCasaDeLeiloes },
         { nome: "Leilões MS",    fn: extrairDadosLeiloesMS    },

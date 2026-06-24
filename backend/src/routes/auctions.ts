@@ -11,6 +11,7 @@ import { extrairDadosMilanLeiloes } from "@/services/milanLeiloesScraper";
 import { extrairDadosGuariglia } from "@/services/guarigliaScraper";
 import { extrairDadosCasaDeLeiloes } from "@/services/casaDeLeiloesScraper";
 import { extrairDadosRicoLeiloes } from "@/services/ricoLeiloesScraper";
+import { extrairDadosSumareLeiloes } from "@/services/sumareleiloesScraper";
 import { ensureAuctionLotsTable, insertAuctionLots, fetchAuctionLots, fetchAuctionLotById, deleteExpiredAuctionLots } from "@/db/auctions";
 
 const router = Router();
@@ -28,6 +29,10 @@ router.post("/sync/:source", async (req: Request, res: Response) => {
     let lotes: AuctionLot[] = [];
 
     switch (source.toLowerCase()) {
+      case "sumare-leiloes":
+      case "sumare":
+        lotes = await extrairDadosSumareLeiloes();
+        break;
       case "rico-leiloes":
         lotes = await extrairDadosRicoLeiloes();
         break;
