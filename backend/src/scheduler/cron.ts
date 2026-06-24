@@ -8,6 +8,10 @@ import { extrairDadosMilanLeiloes } from "@/services/milanLeiloesScraper";
 import { extrairDadosCasaDeLeiloes } from "@/services/casaDeLeiloesScraper";
 import { extrairDadosRicoLeiloes } from "@/services/ricoLeiloesScraper";
 import { extrairDadosSumareLeiloes } from "@/services/sumareleiloesScraper";
+import { extrairDadosReginaAude } from "@/services/reginaAudeScraper";
+import { extrairDadosAutoTran } from "@/services/autotranScraper";
+import { extrairDadosLeilo } from "@/services/leiloScraper";
+import { extrairDadosGuariglia } from "@/services/guarigliaScraper";
 import { ensureAuctionLotsTable, insertAuctionLots, deleteExpiredAuctionLots } from "@/db/auctions";
 
 /** Aguarda N milissegundos antes de continuar */
@@ -60,6 +64,10 @@ export function initScheduler() {
 
       // ── Scrapers executados sequencialmente com 5 min de intervalo ──────
       const scrapers: Array<{ nome: string; fn: () => Promise<any[]> }> = [
+        { nome: "Regina Aude",    fn: extrairDadosReginaAude   },
+        { nome: "AutoTran",       fn: extrairDadosAutoTran     },
+        { nome: "Leiló",          fn: extrairDadosLeilo        },
+        { nome: "Guariglia",      fn: extrairDadosGuariglia    },
         { nome: "Sumaré Leilões", fn: extrairDadosSumareLeiloes },
         { nome: "Rico Leilões",   fn: extrairDadosRicoLeiloes },
         { nome: "Casa de Leilões", fn: extrairDadosCasaDeLeiloes },
