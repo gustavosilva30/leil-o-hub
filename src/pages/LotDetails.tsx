@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, MapPin, Calendar, Heart, Share2, AlertTriangle, Info, ExternalLink, Settings2, Plus, Tag } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Heart, Share2, AlertTriangle, Info, ExternalLink, Settings2, Plus, Tag, Car } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -63,9 +63,21 @@ export function LotDetails() {
 
   const parsed = parseVeiculo(data.veiculo_origem);
 
-  let lotImagens = data.image_url ? [data.image_url] : ['https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=800&h=600'];
+  let lotImagens = data.image_url ? [data.image_url] : [];
   if (data.raw && Array.isArray(data.raw.lot_pictures) && data.raw.lot_pictures.length > 0) {
     lotImagens = data.raw.lot_pictures;
+  }
+
+  // Tenta extrair o lance atual de várias fontes possíveis em data.raw
+  let lanceAtual = 0;
+  if (data.raw) {
+    const bid = data.raw.bid_actual || data.raw.lance_atual || data.raw.valor_atual || data.raw.atual || data.raw.bid || data.raw.lanceAtual;
+    if (bid) {
+      const parsedBid = parseFloat(String(bid).replace(/[^\d.,]/g, '').replace(',', '.'));
+      if (!isNaN(parsedBid)) {
+        lanceAtual = parsedBid;
+      }
+    }
   }
 
   const lot = {
@@ -81,7 +93,7 @@ export function LotDetails() {
     imagens: lotImagens,
     linkLeilao: data.link_leilao,
     valorEstimado: 0,
-    lanceAtual: 0,
+    lanceAtual: lanceAtual,
     dataLeilao: data.auction_start_at || data.auction_end_at || new Date().toISOString(),
     descricao: data.raw?.descricao || `Veículo do lote ${data.numero_lote} da fonte ${data.fonte || data.source}.`,
     motor: data.raw?.motor || false,
@@ -151,24 +163,33 @@ export function LotDetails() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <div className="aspect-video bg-slate-100 dark:bg-slate-800 rounded-2xl overflow-hidden relative border border-slate-200 dark:border-slate-800">
-            <img 
-              src={lot.imagens[selectedImg] || lot.imagens[0]} 
-              alt="Veículo principal" 
-              className="w-full h-full object-cover"
-            />
+          <div className="aspect-video bg-slate-100 dark:bg-slate-800 rounded-2xl overflow-hidden relative border border-slate-200 dark:border-slate-800 flex items-center justify-center">
+            {lot.imagens[selectedImg] || lot.imagens[0] ? (
+              <img 
+                src={lot.imagens[selectedImg] || lot.imagens[0]} 
+                alt="Veículo principal" 
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 flex flex-col items-center justify-center gap-2 text-slate-400 dark:text-slate-500">
+                <Car className="w-16 h-16 stroke-[1.5]" />
+                <span className="text-sm font-semibold uppercase tracking-wider">Foto não disponível</span>
+              </div>
+            )}
           </div>
-          <div className="grid grid-cols-5 md:grid-cols-8 gap-3">
-            {lot.imagens.map((img, i) => (
-               <div 
-                 key={i} 
-                 onClick={() => setSelectedImg(i)}
-                 className={`aspect-video bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden cursor-pointer transition-all hover:scale-[1.02] border-2 ${selectedImg === i ? 'border-blue-500 opacity-100' : 'border-transparent opacity-60 hover:opacity-100'}`}
-               >
-                 <img src={img} alt={`Thumb ${i}`} className="w-full h-full object-cover" />
-               </div>
-            ))}
-          </div>
+          {lot.imagens.length > 0 && (
+            <div className="grid grid-cols-5 md:grid-cols-8 gap-3">
+              {lot.imagens.map((img, i) => (
+                 <div 
+                   key={i} 
+                   onClick={() => setSelectedImg(i)}
+                   className={`aspect-video bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden cursor-pointer transition-all hover:scale-[1.02] border-2 ${selectedImg === i ? 'border-blue-500 opacity-100' : 'border-transparent opacity-60 hover:opacity-100'}`}
+                 >
+                   <img src={img} alt={`Thumb ${i}`} className="w-full h-full object-cover" />
+                 </div>
+              ))}
+            </div>
+          )}
 
           <Tabs defaultValue="info" className="w-full">
             <TabsList className="w-full justify-start border-b border-slate-200 dark:border-slate-800 rounded-none pb-0 h-auto bg-transparent p-0 space-x-6">

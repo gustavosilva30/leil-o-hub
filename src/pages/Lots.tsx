@@ -10,7 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Calendar, MapPin, Grid, List as ListIcon, Heart } from 'lucide-react';
+import { Calendar, MapPin, Grid, List as ListIcon, Heart, Car } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export function Lots() {
@@ -77,6 +77,19 @@ export function Lots() {
 
   const transformedLots = lotes.map((l: any, i: number) => {
     const parsed = parseVeiculo(l.veiculo_origem);
+    
+    // Tenta extrair o lance atual de várias fontes possíveis em l.raw
+    let lanceAtual = 0;
+    if (l.raw) {
+      const bid = l.raw.bid_actual || l.raw.lance_atual || l.raw.valor_atual || l.raw.atual || l.raw.bid || l.raw.lanceAtual;
+      if (bid) {
+        const parsedBid = parseFloat(String(bid).replace(/[^\d.,]/g, '').replace(',', '.'));
+        if (!isNaN(parsedBid)) {
+          lanceAtual = parsedBid;
+        }
+      }
+    }
+
     return {
       id: l.id || `L-${i}`,
       numeroLote: l.numero_lote,
@@ -87,9 +100,9 @@ export function Lots() {
       cidade: l.source === 'leiloes-ms' ? 'Campo Grande' : (l.raw?.yard_city || l.raw?.city || 'São Paulo'),
       tipo: l.tipo_sucata === 'inservivel' ? 'Inservível' : 'Aproveitável',
       leiloeiro: l.fonte || l.source,
-      imagens: l.image_url ? [l.image_url] : ['https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=800&h=600'],
+      imagens: l.image_url ? [l.image_url] : [],
       valorEstimado: 0,
-      lanceAtual: 0,
+      lanceAtual: lanceAtual,
       dataLeilao: l.auction_start_at || l.auction_end_at || new Date().toISOString(),
     };
   });
@@ -278,13 +291,20 @@ export function Lots() {
           }>
             {displayedLots.map(lot => (
               <Card key={lot.id} className="overflow-hidden group flex flex-col bg-slate-50 border-slate-100 dark:bg-slate-900 dark:border-slate-800 hover:shadow-md transition-shadow">
-                <div className="relative aspect-video overflow-hidden bg-slate-200 dark:bg-slate-800">
-                  <Link to={`/lots/${lot.id}`}>
-                    <img 
-                      src={lot.imagens[0]} 
-                      alt={`${lot.marca} ${lot.modelo}`}
-                      className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105 cursor-pointer"
-                    />
+                <div className="relative aspect-video overflow-hidden bg-slate-200 dark:bg-slate-800 flex items-center justify-center">
+                  <Link to={`/lots/${lot.id}`} className="w-full h-full">
+                    {lot.imagens[0] ? (
+                      <img 
+                        src={lot.imagens[0]} 
+                        alt={`${lot.marca} ${lot.modelo}`}
+                        className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105 cursor-pointer"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 flex flex-col items-center justify-center gap-2 text-slate-400 dark:text-slate-500 group-hover:scale-105 transition-transform duration-300 cursor-pointer">
+                        <Car className="w-10 h-10 stroke-[1.5]" />
+                        <span className="text-xs font-semibold uppercase tracking-wider">Foto não disponível</span>
+                      </div>
+                    )}
                   </Link>
                   <div className="absolute top-2 left-2">
                     <Badge variant={lot.tipo === 'Sucata para Desmonte' ? 'destructive' : 'default'} className="backdrop-blur-md bg-opacity-90">

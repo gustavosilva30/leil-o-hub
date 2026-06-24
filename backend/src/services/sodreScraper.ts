@@ -117,10 +117,10 @@ export const extrairDadosSodre = async (): Promise<AuctionLot[]> => {
         if (!numeroLote) continue;
 
         const imageUrl = foto || "";
-        const maybeMarca = carro.brand || carro.make || carro.manufacturer || null;
-        const maybeModelo = carro.model || carro.modelo || null;
-        const maybeAno = carro.year || carro.year_manufacture || carro.model_year || null;
-        const maybePlaca = carro.plate || carro.license_plate || null;
+        const maybeMarca = carro.lot_brand || carro.brand || carro.make || carro.manufacturer || null;
+        const maybeModelo = carro.lot_model || carro.model || carro.modelo || null;
+        const maybeAno = carro.lot_year_model || carro.lot_year_manufacture || carro.year || carro.year_manufacture || carro.model_year || null;
+        const maybePlaca = carro.lot_plate || carro.plate || carro.license_plate || null;
 
         veiculosEncontrados.push({
           source: "sodre",
